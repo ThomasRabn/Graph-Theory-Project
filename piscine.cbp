@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -22,6 +23,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -32,7 +34,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Arete.h" />
+		<Unit filename="include/Graphe.h" />
+		<Unit filename="include/Sommet.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Arete.cpp" />
+		<Unit filename="src/Graphe.cpp" />
+		<Unit filename="src/Sommet.cpp" />
 		<Unit filename="src/svg.cpp" />
 		<Unit filename="src/svg.h" />
 		<Extensions>
