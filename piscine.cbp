@@ -33,8 +33,8 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
-		<Unit filename="svg.cpp" />
-		<Unit filename="svg.h" />
+		<Unit filename="src/svg.cpp" />
+		<Unit filename="src/svg.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
