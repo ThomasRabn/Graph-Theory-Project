@@ -52,6 +52,4 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
 }
 
 Graphe::~Graphe()
-{
-  //dtor
-}
+{}
