@@ -8,6 +8,7 @@ class Arete
 {
   public:
     Arete(int index, int s1, int s2);
+
     int getIndex() const { return m_index; }
     void setArete(int index, int s1, int s2) {
         ( index >= 0 )? this->m_index = index : this->m_index = -1;
@@ -15,6 +16,7 @@ class Arete
         this->m_s2 = s2;
     }
     void addPoids(float poids) { this->m_poids.push_back(poids); }
+
     ~Arete();
 
   protected:

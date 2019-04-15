@@ -53,3 +53,15 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
 
 Graphe::~Graphe()
 {}
+
+Graphe Graphe::parcourKruskal() {
+    std::unordered_map<int, Sommet*> sommets = getSommets();
+    std::unordered_map<int, Arete*> aretes = getAretes();
+}
+
+
+
+
+
+
+
