@@ -1,21 +1,29 @@
 #ifndef GRAPHE_H
 #define GRAPHE_H
 
+#include <iostream>
 #include <unordered_map>
+#include <iomanip> // setprecision
+#include <sstream> // stringstream
 #include "Sommet.h"
 #include "Arete.h"
+#include "svgfile.h"
 
 class Graphe
 {
   public:
     Graphe(std::string nomFichier, std::string nomFichier2);
 
+    /// GETTERS
     std::unordered_map<int, Sommet*> getSommets() const { return m_sommets; }
     std::unordered_map<int, Arete*> getAretes() const { return m_aretes; }
 
+    /// Affichage
+    void dessiner(Svgfile& svgout);
+
     ~Graphe();
 
-    /// algorithme
+    /// Algorithme
     Graphe parcourKruskal();
 
   protected:

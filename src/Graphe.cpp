@@ -51,6 +51,41 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     }
 }
 
+void Graphe::dessiner(Svgfile& svgout) {
+    int s1, s2, x1, y1, x2, y2;
+    for(const auto& it : m_aretes) {
+        s1 = it.second->getS1();
+        s2 = it.second->getS2();
+        x1 = m_sommets.find(s1)->second->getX();
+        y1 = m_sommets.find(s1)->second->getY();
+        x2 = m_sommets.find(s2)->second->getX();
+        y2 = m_sommets.find(s2)->second->getY();
+        svgout.addLine(x1, y1, x2, y2);
+        int dy = y2-y1;
+        std::string poids = "(";
+        std::vector<float> vecPoids = it.second->getPoids();
+        for(unsigned int i = 0; i < vecPoids.size(); ++i) {
+            std::stringstream number;
+            number << std::fixed << std::setprecision(2) << vecPoids[i];
+            poids.append(number.str());
+            if(i != vecPoids.size()-1)    poids.append(" ; ");
+            else                        poids.append(")");
+        }
+
+        if((dy > 5) || (dy < -5)) {
+            svgout.addText(((x1 + x2)/2)+5, ((y1+y2)/2), poids);
+        } else {
+            svgout.addText(((x1 + x2)/2)-50, ((y1+y2)/2)-10, poids);
+        }
+
+    }
+    for(const auto& it : m_sommets) {
+        x1 = it.second->getX();
+        y1 = it.second->getY();
+        svgout.addDisk(x1, y1, 7);
+    }
+}
+
 Graphe::~Graphe()
 {}
 
@@ -58,10 +93,3 @@ Graphe Graphe::parcourKruskal() {
     std::unordered_map<int, Sommet*> sommets = getSommets();
     std::unordered_map<int, Arete*> aretes = getAretes();
 }
-
-
-
-
-
-
-
