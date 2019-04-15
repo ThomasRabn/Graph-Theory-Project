@@ -9,6 +9,7 @@ class Graphe
 {
   public:
     Graphe(std::string nomFichier, std::string nomFichier2);
+    Graphe(std::unordered_map<int, Sommet*> m_sommets, std::unordered_map<int, Arete*> m_aretes);
 
     std::unordered_map<int, Sommet*> getSommets() const { return m_sommets; }
     std::unordered_map<int, Arete*> getAretes() const { return m_aretes; }
@@ -16,7 +17,7 @@ class Graphe
     ~Graphe();
 
     /// algorithme
-    Graphe parcourKruskal();
+    Graphe parcourKruskal(unsigned int indexOfPoids);
 
   protected:
 

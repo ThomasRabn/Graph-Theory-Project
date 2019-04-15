@@ -1,20 +1,31 @@
 # depslib dependency file v1.0
-1555340087 source:c:\users\peter\desktop\projetpiscine\main.cpp
+1555360701 source:c:\users\peter\desktop\projetpiscine\main.cpp
 	<iostream>
+	"Graphe.h"
+	"Sommet.h"
+	"Arete.h"
 
 1555343742 source:c:\users\peter\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
 
-1555344988 c:\users\peter\desktop\projetpiscine\include\arete.h
+1555366407 c:\users\peter\desktop\projetpiscine\include\arete.h
 	<vector>
 	"Sommet.h"
 
-1555344987 c:\users\peter\desktop\projetpiscine\include\sommet.h
+1555365725 c:\users\peter\desktop\projetpiscine\include\sommet.h
+	<iostream>
 
-1555338475 source:c:\users\peter\desktop\projetpiscine\src\graphe.cpp
+1555366556 source:c:\users\peter\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
+	<fstream>
+	<iostream>
+	<queue>
+	<stack>
+	<unordered_map>
+	<unordered_set>
+	<algorithm>
 
-1555340027 c:\users\peter\desktop\projetpiscine\include\graphe.h
+1555360282 c:\users\peter\desktop\projetpiscine\include\graphe.h
 	<unordered_map>
 	"Sommet.h"
 	"Arete.h"

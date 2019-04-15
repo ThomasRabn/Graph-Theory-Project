@@ -1,10 +1,13 @@
 #ifndef SOMMET_H
 #define SOMMET_H
 
+#include <iostream>
 class Sommet
 {
   public:
     Sommet(int index, int x, int y);
+
+    void setIndex(int index) { m_index = index; }
 
     int getIndex() const { return m_index; }
     int getX() const { return m_x; }

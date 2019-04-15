@@ -1,5 +1,13 @@
 #include "Graphe.h"
 #include <fstream>
+#include <iostream>
+#include <queue>
+#include <stack>
+#include<unordered_map>
+#include<unordered_set>
+#include <algorithm>
+
+//bool comparePoids(const Arete* a, const Arete* b, unsigned int indexOfPoids) { return ((a->getPoids(indexOfPoids) > b->getPoids(indexOfPoids)); } ///fonction pour comparer 2 poids entre eux
 
 Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     std::ifstream fichier{nomFichier};
@@ -51,12 +59,45 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     }
 }
 
+Graphe::Graphe(std::unordered_map<int, Sommet*> sommets, std::unordered_map<int, Arete*> aretes)
+    :m_sommets{sommets}, m_aretes{aretes}
+{}
+
+
 Graphe::~Graphe()
 {}
 
-Graphe Graphe::parcourKruskal() {
+Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
+
     std::unordered_map<int, Sommet*> sommets = getSommets();
     std::unordered_map<int, Arete*> aretes = getAretes();
+
+    std::unordered_map<int, Arete*> aretesFinaux;
+
+    unsigned int nbAdd = 0;
+    //std::sort(aretes.begin(), aretes.end(), comparePoids);
+
+    while (nbAdd < sommets.size()){
+        for (auto it: aretes){
+            //std::cout << it.second->getS1() << std::endl;
+            if ( it.second->getS1() != it.second->getS2() ){
+
+                std::cout << "S1 " << it.second->getS1() << " et S2 " << it.second->getS2() << std::endl;
+
+                aretesFinaux.insert(it);
+
+                it.second->setS2(it.second->getS1());
+
+                std::cout << "S1 " << it.second->getS1() << " et S2 " << it.second->getS2() << std::endl;
+
+                std::cout << "--------------------------" << std::endl;
+            }
+        }
+        nbAdd++;
+    }
+
+    Graphe myGraphe {sommets, aretes};
+    return myGraphe;
 }
 
 
