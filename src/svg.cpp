@@ -1,4 +1,4 @@
-#include "svgfile.h"
+/**#include "svgfile.h"
 #include <iostream>
 #include <sstream>
 
@@ -173,4 +173,4 @@ std::string Svgfile::makeRGB(int r, int g, int b)
     std::ostringstream oss;
     oss << "rgb(" << r << "," << g << "," << b << ")";
     return oss.str();
-}
+}**/
