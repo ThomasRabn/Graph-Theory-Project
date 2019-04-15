@@ -6,6 +6,7 @@ class Sommet
   public:
     Sommet(int index, int x, int y);
 
+    /// GETTERS
     int getIndex() const { return m_index; }
     int getX() const { return m_x; }
     int getY() const { return m_y; }
