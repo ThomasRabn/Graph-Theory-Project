@@ -8,6 +8,7 @@ class Arete
 {
   public:
     Arete(int index, int s1, int s2);
+    Arete(int index, int s1, int s2, std::vector<float> vecPoids);
 
     void setArete(int index, int s1, int s2) {
         setIndex(index);
@@ -32,7 +33,7 @@ class Arete
     int getPoids(unsigned int indexOfPoids) const { return m_poids[indexOfPoids]; }
     int getIndex() const { return m_index; }
 
-    ~Arete();
+    ~Arete() = default;
 
   protected:
 

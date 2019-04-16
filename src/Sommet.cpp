@@ -17,6 +17,3 @@ void Sommet::afficherAretes() const {
     }
     std::cout << std::endl;
 }
-
-Sommet::~Sommet()
-{}
