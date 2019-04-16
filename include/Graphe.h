@@ -25,6 +25,7 @@ class Graphe
 
     /// Algorithme
     Graphe parcourKruskal();
+    std::vector<Graphe> ensembleSousGraphes()const;
 
   protected:
 

@@ -105,6 +105,19 @@ void Graphe::dessiner(Svgfile& svgout) {
     }
 }
 
+std::vector<Graphe> Graphe::ensembleSousGraphes()const {
+    std::vector<Graphe> sousGraphes;
+    std::vector<bool> etats, allTrue;
+    for(unsigned int i = 0; i < m_aretes.size(); ++i) {
+        etats.push_back(0);
+        allTrue.push_back(1);
+    }
+    bool run = 1;
+    while(run) {
+
+    }
+}
+
 Graphe::~Graphe()
 {}
 
