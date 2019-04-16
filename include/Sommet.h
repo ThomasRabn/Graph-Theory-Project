@@ -1,6 +1,9 @@
 #ifndef SOMMET_H
 #define SOMMET_H
 
+#include <vector>
+#include <iostream>
+
 class Sommet
 {
   public:
@@ -16,13 +19,17 @@ class Sommet
         this->m_y = y;
     }
 
+    /// Permet d'ajouter une arete dans le vecteur d'arete du sommet
+    void addArete(int arete);
+
+    /// Permet d'afficher en console les aretes adjacentes à un sommet
+    void afficherAretes()const;
+
     ~Sommet();
 
-  protected:
-
   private:
-      int m_index, m_x, m_y; /// L'indexe du Sommet pour son référencement
-                             /// Les cordonnés du Sommet en X/Y
+    int m_index, m_x, m_y;  /// L'index du Sommet pour son référencement et les coordonnées du Sommet en X/Y
+    std::vector<int> m_aretesSommet; /// Vecteur d'aretes adjacentes
 };
 
 #endif // SOMMET_H

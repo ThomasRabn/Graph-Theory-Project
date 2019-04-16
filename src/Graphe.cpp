@@ -21,6 +21,7 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
         m_sommets.insert({id,new Sommet{id,x,y}});
     }
 
+    /// On vérifie que les tailles sont les memes
     int taille, taille2;
     fichier >> taille;
     if (fichier.fail())
@@ -32,13 +33,19 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
         throw std::runtime_error("La taille du graphe n'est pas la meme dans " + nomFichier + " et dans " + nomFichier2);
 
     int s1, s2;
+    /// On ajoute les aretes au graphe et aux sommets
     for(int i = 0; i < taille; ++i){
+        /// On sort les infos du fichier
         fichier >> id;      if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'id de l'arete " + i);
         fichier >> s1;      if(fichier.fail()) throw std::runtime_error("Probleme de lecture du sommet 1 de l'arete " + i);
         fichier >> s2;      if(fichier.fail()) throw std::runtime_error("Probleme de lecture du sommet 2 de l'arete " + i);
-        m_aretes.insert({id,new Arete{id,s1,s2}});
+        /// On insert les infos
+        m_aretes.insert({id,new Arete{id,s1,s2}}); // On ajoute le numero l'arete dans le tableau
+        m_sommets.find(s1)->second->addArete(id);  // On ajoute le numero de l'arete dans le sommet 1
+        m_sommets.find(s2)->second->addArete(id);  // On ajoute le numero de l'arete dans le sommet 2
     }
 
+    /// On ajoute le poids des aretes
     int nbrPoids;
     float poids;
     fichier2 >> nbrPoids;
@@ -49,20 +56,30 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
             ((m_aretes.find(id))->second)->addPoids(poids);
         }
     }
+
+    for(const auto& it : m_sommets) {
+        it.second->afficherAretes();
+    }
 }
 
 void Graphe::dessiner(Svgfile& svgout) {
     int s1, s2, x1, y1, x2, y2;
+    /// DESSIN DES ARETES
     for(const auto& it : m_aretes) {
+        /// On prend les infos
         s1 = it.second->getS1();
         s2 = it.second->getS2();
         x1 = m_sommets.find(s1)->second->getX();
         y1 = m_sommets.find(s1)->second->getY();
         x2 = m_sommets.find(s2)->second->getX();
         y2 = m_sommets.find(s2)->second->getY();
+
+        /// On dessine une ligne
         svgout.addLine(x1, y1, x2, y2);
         int dy = y2-y1;
         std::string poids = "(";
+
+        /// Affichage du poids
         std::vector<float> vecPoids = it.second->getPoids();
         for(unsigned int i = 0; i < vecPoids.size(); ++i) {
             std::stringstream number;
@@ -72,13 +89,15 @@ void Graphe::dessiner(Svgfile& svgout) {
             else                        poids.append(")");
         }
 
+        /// Permet de savoir où sur l'écran on affiche le texte
         if((dy > 5) || (dy < -5)) {
             svgout.addText(((x1 + x2)/2)+5, ((y1+y2)/2), poids);
         } else {
             svgout.addText(((x1 + x2)/2)-50, ((y1+y2)/2)-10, poids);
         }
-
     }
+
+    /// DESSIN DES SOMMETS
     for(const auto& it : m_sommets) {
         x1 = it.second->getX();
         y1 = it.second->getY();
