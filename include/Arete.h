@@ -9,12 +9,6 @@ class Arete
   public:
     Arete(int index, int s1, int s2);
 
-    int getIndex() const { return m_index; }
-    int getPoids(unsigned int indexOfPoids) const { return m_poids[indexOfPoids]; }
-    int getS1() const { return m_s1; }
-    int getS2() const { return m_s2; }
-
-
     void setArete(int index, int s1, int s2) {
         setIndex(index);
         this->m_s1 = s1;
@@ -35,6 +29,7 @@ class Arete
     int getS1() const    { return m_s1; }
     int getS2() const    { return m_s2; }
     std::vector<float> getPoids() const { return m_poids; }
+    int getPoids(unsigned int indexOfPoids) const { return m_poids[indexOfPoids]; }
     int getIndex() const { return m_index; }
 
     ~Arete();

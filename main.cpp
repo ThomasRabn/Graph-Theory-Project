@@ -8,8 +8,9 @@
 
 int main()
 {
+    Svgfile svgout;
     Graphe myGraphe{"files/broadway.txt", "files/broadway_weights_0.txt"};
     myGraphe.parcourKruskal(0);
-    myGraphe.dessiner();
+    myGraphe.dessiner(svgout);
     return 0;
 }

@@ -69,10 +69,6 @@ Graphe::Graphe(std::unordered_map<int, Sommet*> sommets, std::unordered_map<int,
     :m_sommets{sommets}, m_aretes{aretes}
 {}
 
-
-Graphe::~Graphe()
-{}
-
 Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
 
     std::unordered_map<int, Sommet*> sommets = getSommets();
@@ -179,8 +175,3 @@ void Graphe::dessiner(Svgfile& svgout) {
 
 Graphe::~Graphe()
 {}
-
-Graphe Graphe::parcourKruskal() {
-    std::unordered_map<int, Sommet*> sommets = getSommets();
-    std::unordered_map<int, Arete*> aretes = getAretes();
-}
