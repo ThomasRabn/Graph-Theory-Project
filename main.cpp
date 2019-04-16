@@ -10,7 +10,7 @@ int main()
 {
     Svgfile svgout;
     Graphe myGraphe{"files/broadway.txt", "files/broadway_weights_0.txt"};
-    myGraphe.parcourKruskal(0);
-    myGraphe.dessiner(svgout);
+    Graphe test = myGraphe.parcourKruskal(0);
+    test.dessiner(svgout);
     return 0;
 }

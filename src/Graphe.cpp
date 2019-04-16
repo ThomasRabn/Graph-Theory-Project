@@ -75,7 +75,6 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     std::unordered_map<int, Arete*> aretes = getAretes();
     std::unordered_map<int, Arete*> aretesFinaux;
     std::map<int, int> sommetsConnexe;
-
     std::vector<int> aretesCroissante;
 
     while (!aretes.empty()){
@@ -88,44 +87,56 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
             minId = it.second->getIndex();
           }
         }
-
         aretesCroissante.push_back(minId);
-        /// Cout test std::cout << "suppr " << minId << std::endl;
         aretes.erase(aretes.find(minId));
     }
+
 
     aretes = getAretes(); /// pour reprendre le tableau car on vient de le modifier
     for (const auto& it: sommets){
       sommetsConnexe.insert({it.second->getIndex(), it.second->getIndex()}); ///première valeur pour l'index du sommet et la seconde valeur pour sa "couleur"
     }
 
-    unsigned int nbAdd = 0;
-
+    unsigned int nbAdd = 1;
     while (nbAdd < sommets.size()){
+        std::cout << "-------------------------------------------" << std::endl;
+        for (const auto& current: aretesCroissante){
 
-        for (const auto& it: aretes){
-          int s1 = sommetsConnexe.find(it.second->getS1())->second;
-          int s2 = sommetsConnexe.find(it.second->getS2())->second;
-          if ( s1 != s2 ){
+          auto it = aretes.find(aretesCroissante[current]);
 
-            /// Cout test std::cout << "S1 " << s1 << " et S2 " << s2 << std::endl;
-            aretesFinaux.insert(it);
-            sommetsConnexe.find(it.second->getS2())->second = sommetsConnexe.find(it.second->getS1())->second;
+          std::cout << "Index de l'aretes en cours " << it->second->getIndex() << std::endl;
+          int s1 = sommetsConnexe.find(it->second->getS1())->second;
+          int s2 = sommetsConnexe.find(it->second->getS2())->second;
+          if ( (s1 != s2) && (aretesFinaux.find(it->second->getIndex()) == aretesFinaux.end()) ){
 
+
+            std::cout << "s1 avant " << s1 << " s2 avant " << s2 << std::endl;
+            nbAdd++;
+            aretesFinaux.insert(*it);
             for (auto its: sommetsConnexe){
-              if ( its.second == s2) its.second = s1;
+              if ( its.second == s2){
+                std::cout << " modif for avant " << its.second << " apres " << its.second << std::endl;
+                sommetsConnexe.find(its.second)->second = sommetsConnexe.find(it->second->getS1())->second;
+              }
             }
+            sommetsConnexe.find(it->second->getS2())->second = sommetsConnexe.find(it->second->getS1())->second;
 
-            /// Cout test std::cout << "S1 " << sommetsConnexe.find(it.second->getS1())->second << " et S2 " << sommetsConnexe.find(it.second->getS2())->second << std::endl;
-            /// Cout test std::cout << "--------------------------" << std::endl;
+            std::cout << "Ajout d'une arete: " << it->second->getIndex() << std::endl;
+            std::cout << "nbAdd =  " << nbAdd << std::endl;
+            std::cout << "s1 apres " << sommetsConnexe.find(it->second->getS1())->second << " s2 apres " << sommetsConnexe.find(it->second->getS1())->second << std::endl;
+            for (const auto& i:sommetsConnexe)std::cout << i.second << '/';
+
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
 
           }
         }
-        nbAdd++;
     }
-
-    /// Cout test for (auto its: sommetsConnexe)std::cout << " valeur final " << its.second << std::endl;
-
+    for (const auto& i:sommetsConnexe)std::cout << i.second << '/';
+    std::cout << std::endl;
+    for (const auto& i:aretesFinaux)std::cout << i.second->getIndex() << '/';
     Graphe myGraphe {sommets, aretesFinaux};
     return myGraphe;
 }

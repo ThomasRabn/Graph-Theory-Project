@@ -1,36 +1,44 @@
 # depslib dependency file v1.0
-1555360701 source:c:\users\peter\desktop\projetpiscine\main.cpp
+1555430912 source:c:\users\peter\desktop\projetpiscine\main.cpp
 	<iostream>
+	"svgfile.h"
+	"Graphe.h"
 	"Graphe.h"
 	"Sommet.h"
 	"Arete.h"
 
-1555343742 source:c:\users\peter\desktop\projetpiscine\src\arete.cpp
+1555428115 source:c:\users\peter\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
 
-1555366407 c:\users\peter\desktop\projetpiscine\include\arete.h
+1555428115 c:\users\peter\desktop\projetpiscine\include\arete.h
 	<vector>
 	"Sommet.h"
 
-1555365725 c:\users\peter\desktop\projetpiscine\include\sommet.h
+1555428115 c:\users\peter\desktop\projetpiscine\include\sommet.h
+	<vector>
 	<iostream>
 
-1555366556 source:c:\users\peter\desktop\projetpiscine\src\graphe.cpp
+1555430851 source:c:\users\peter\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
 	<fstream>
 	<iostream>
 	<queue>
 	<stack>
 	<unordered_map>
+	<map>
 	<unordered_set>
 	<algorithm>
 
-1555360282 c:\users\peter\desktop\projetpiscine\include\graphe.h
+1555428115 c:\users\peter\desktop\projetpiscine\include\graphe.h
+	<iostream>
 	<unordered_map>
+	<iomanip>
+	<sstream>
 	"Sommet.h"
 	"Arete.h"
+	"svgfile.h"
 
-1555342364 source:c:\users\peter\desktop\projetpiscine\src\sommet.cpp
+1555428115 source:c:\users\peter\desktop\projetpiscine\src\sommet.cpp
 	"Sommet.h"
 
 1555340487 source:c:\users\peter\desktop\projetpiscine\src\svg.cpp
@@ -128,4 +136,13 @@
 
 1555417049 source:c:\users\thoma\desktop\projetpiscine\src\sommet.cpp
 	"Sommet.h"
+
+1555428115 c:\users\peter\desktop\projetpiscine\include\svgfile.h
+	<string>
+	<fstream>
+	<set>
+
+1555428115 source:c:\users\peter\desktop\projetpiscine\src\svgfile.cpp
+	<iostream>
+	<sstream>
 
