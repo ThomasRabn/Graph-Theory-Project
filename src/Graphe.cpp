@@ -134,9 +134,11 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
 std::vector<Graphe*> Graphe::ensembleGraphesPartiels() {
     std::vector<Graphe*> graphesPartiels;
     std::vector<bool> etats, allTrue;
+    std::vector<bool> changementEtat; // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
     for(unsigned int i = 0; i < m_aretes.size(); ++i) {
         etats.push_back(0);
         allTrue.push_back(1);
+        changementEtat.push_back(0);
     }
     bool run = 1;
     while(run) {
@@ -147,21 +149,20 @@ std::vector<Graphe*> Graphe::ensembleGraphesPartiels() {
             //std::cout << it;
             if(it) {
                 Arete* areteCourante = m_aretes.find(compteur)->second;
-                int id = areteCourante->getIndex();
+                /*int id = areteCourante->getIndex();
                 int sommet1 = areteCourante->getS1();
                 int sommet2 = areteCourante->getS2();
-                std::vector<float> vecPoids = areteCourante->getPoids();
-                aretes.insert({id, new Arete{id, sommet1, sommet2, vecPoids}});
+                std::vector<float> vecPoids = areteCourante->getPoids();*/
+                aretes.insert({ areteCourante->getIndex(), areteCourante });
             }
             compteur++;
         }
         graphesPartiels.push_back(new Graphe{m_sommets, aretes});
 
-        if (etats == allTrue)   run = 0; /// Arrete la boucle si on a fait tous les tests
+        if (etats == allTrue)   run = 0; // Arrete la boucle si on a fait tous les tests
         else{ /// Augmente de 1 la valeur binaire enregistrée dans le tableau de booléens (Poids le plus lourd a la fin)
-            std::vector<bool> changementEtat; // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
-            for(unsigned int i = 0; i < etats.size(); ++i)  { changementEtat.push_back(0); }
             for(unsigned int i = 0; i < etats.size(); ++i) {
+                changementEtat[i] = 0;
                 if (i == 0)  { etats[i] = !etats[i]; changementEtat[i] = 1; }
                 else{
                     if ((changementEtat[i-1] == 1) && (etats[i-1] == 0))    { etats[i] = !etats[i]; changementEtat[i] = 1; }
@@ -218,10 +219,11 @@ void Graphe::dessiner(Svgfile& svgout, int x, int y) {
 
 Graphe::~Graphe()
 {
+    /*
     for(auto& ptr : m_sommets) {
         delete ptr.second;
     }
     for(auto& ptr : m_aretes) {
         delete ptr.second;
-    }
+    }*/
 }
