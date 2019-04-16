@@ -1,4 +1,4 @@
-/**#include "svgfile.h"
+ï»¿#include "svgfile.h"
 #include <iostream>
 #include <sstream>
 
@@ -8,20 +8,17 @@ const std::string svgHeader =
 
 const std::string svgEnding = "\n\n</svg>\n";
 
-/// Effets "Boule en relief", voir données à la fin de ce fichier
+/// Effets "Boule en relief", voir donnÃ©es Ã  la fin de ce fichier
 extern const std::string svgBallGradients;
 
 std::set<std::string> Svgfile::s_openfiles;
-
-bool Svgfile::s_verbose = true;
 
 Svgfile::Svgfile(std::string _filename, int _width, int _height) :
     m_filename{_filename}, m_width{_width}, m_height{_height}
 {
 
-    if (s_verbose)
-        std::cout << "Opening SVG output file : "
-                  << m_filename << std::endl;
+    std::cout << "Opening SVG output file : "
+              << m_filename << std::endl;
 
     if ( s_openfiles.count(m_filename) )
         throw std::runtime_error( "File " + m_filename + " already open !" );
@@ -35,8 +32,7 @@ Svgfile::Svgfile(std::string _filename, int _width, int _height) :
         throw std::runtime_error("Could not open file " + m_filename );
     }
 
-    if (s_verbose)
-        std::cout << "OK" << std::endl;
+    std::cout << "OK" << std::endl;
 
     // Writing the header into the SVG file
     m_ostrm << svgHeader;
@@ -63,13 +59,14 @@ std::string attrib(std::string name, T val)
     return oss.str();
 }
 
-void Svgfile::addDisk(double x, double y, double r, std::string color)
+void Svgfile::addDisk(double x, double y, double r, double opacity, std::string color)
 {
     m_ostrm << "<circle "
             << attrib("cx", x)
             << attrib("cy", y)
             << attrib("r",  r)
             << attrib("fill", color )
+            << attrib("fill-opacity", opacity)
             << "/>\n";
 }
 
@@ -111,6 +108,62 @@ void Svgfile::addTriangle(double x1, double y1, double x2, double y2,
             << x3 << "," << y3
             << "\" style=\"fill:" << colorFill
             << "\" />\n";
+}
+
+void Svgfile::addEllipse(double cx, double cy, double rx, double ry, std::string color, double ep, std::string colorStroke, double opacity)
+{
+    m_ostrm << "<ellipse "
+            << attrib("cx", cx)
+            << attrib("cy", cy)
+            << attrib("rx", rx)
+            << attrib("ry", ry)
+            << attrib("fill", color)
+            << attrib("stroke", colorStroke)
+            << attrib("stroke-width", ep)
+            << attrib("fill-opacity", opacity)
+            << "/>\n";
+}
+
+
+void Svgfile::addRectangle(double x, double y, double width, double height, double thickness,
+                           std::string colorfill, std::string colorStroke)
+{
+    m_ostrm << "<rect "
+            << attrib("x", x)
+            << attrib("y", y)
+            << attrib("width", width)
+            << attrib("height", height)
+            << attrib("stroke", colorStroke)
+            << attrib("fill", colorfill)
+            << attrib("stroke-width", thickness)
+            << "/>\n";
+}
+
+void Svgfile::addRectangle(double x, double y, double width, double height, std::string colorfill)
+{
+    m_ostrm << "<rect "
+            << attrib("x", x)
+            << attrib("y", y)
+            << attrib("width", width)
+            << attrib("height", height)
+            << attrib("fill", colorfill)
+            << "/>\n";
+}
+
+void Svgfile::addRectangleArrondi(double x, double y, double width, double height, double rx, double ry,
+                           double thickness, std::string colorfill, std::string colorStroke)
+{
+    m_ostrm << "<rect "
+            << attrib("x", x)
+            << attrib("y", y)
+            << attrib("rx", rx)
+            << attrib("ry", ry)
+            << attrib("width", width)
+            << attrib("height", height)
+            << attrib("stroke", colorStroke)
+            << attrib("fill", colorfill)
+            << attrib("stroke-width", thickness)
+            << "/>\n";
 }
 
 void Svgfile::addLine(double x1, double y1, double x2, double y2, std::string color)
@@ -168,9 +221,40 @@ void Svgfile::addGrid(double span, bool numbering, std::string color)
     }
 }
 
+void Svgfile::addBlur()
+{
+    m_ostrm << "<defs>\n"
+            << "<filter "
+            << attrib("id", "blur")
+            << attrib("x", "-50%")
+            << attrib("y", "-50%")
+            << attrib("width", "200%")
+            << attrib("height", "200%")
+            << ">\n"
+            << "<feGaussianBlur "
+            << attrib("in", "SourceGraphic")
+            << attrib("stdDeviation", 5)
+            << "/>\n"
+            << "</filter>"
+            << "</defs>\n";
+}
+
+void Svgfile::addBlurredDisk(double x, double y, double r, double opacity, std::string color)
+{
+    addBlur();
+    m_ostrm << "<circle "
+            << attrib("cx", x)
+            << attrib("cy", y)
+            << attrib("r",  r)
+            << attrib("fill", color )
+            << attrib("fill-opacity", opacity)
+            << attrib("filter", "url(#blur)")
+            << "/>\n";
+}
+
 std::string Svgfile::makeRGB(int r, int g, int b)
 {
     std::ostringstream oss;
     oss << "rgb(" << r << "," << g << "," << b << ")";
     return oss.str();
-}**/
+}

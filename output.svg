@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="800">
+
+<line x1="100" y1="200" x2="200" y2="200" stroke="black" />
+<text x="100" y="190" fill="black" >(6.00 ; 9.00)</text>
+<line x1="100" y1="100" x2="200" y2="100" stroke="black" />
+<text x="100" y="90" fill="black" >(8.00 ; 5.00)</text>
+<line x1="100" y1="100" x2="100" y2="200" stroke="black" />
+<text x="105" y="150" fill="black" >(2.00 ; 5.00)</text>
+<line x1="200" y1="100" x2="100" y2="200" stroke="black" />
+<text x="155" y="150" fill="black" >(3.00 ; 6.00)</text>
+<line x1="200" y1="100" x2="200" y2="200" stroke="black" />
+<text x="205" y="150" fill="black" >(8.00 ; 4.00)</text>
+<circle cx="200" cy="200" r="7" fill="black" fill-opacity="1" />
+<circle cx="100" cy="200" r="7" fill="black" fill-opacity="1" />
+<circle cx="200" cy="100" r="7" fill="black" fill-opacity="1" />
+<circle cx="100" cy="100" r="7" fill="black" fill-opacity="1" />
+
+
+</svg>

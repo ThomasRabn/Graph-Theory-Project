@@ -1,4 +1,6 @@
 #include <iostream>
+#include "svgfile.h"
+#include "Graphe.h"
 
 #include "Graphe.h"
 #include "Sommet.h"
