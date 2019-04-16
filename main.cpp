@@ -5,7 +5,7 @@
 int main()
 {
     Svgfile svgout;
-    Graphe g{"files/cubetown.txt", "files/cubetown_weights_0.txt"};
+    Graphe g{"files/broadway.txt", "files/broadway_weights_0.txt"};
     g.dessiner(svgout);
     return 0;
 }
