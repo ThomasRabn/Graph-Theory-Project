@@ -10,7 +10,7 @@ class Arete
     Arete(int index, int s1, int s2);
 
     int getIndex() const { return m_index; }
-    int getPoids(unsigned int indexOfPoids) const { if(indexOfPoids < m_poids.size())return m_poids[indexOfPoids]; }
+    int getPoids(unsigned int indexOfPoids) const { return m_poids[indexOfPoids]; }
     int getS1() const { return m_s1; }
     int getS2() const { return m_s2; }
     void setArete(int index, int s1, int s2) {
