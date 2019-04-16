@@ -102,31 +102,25 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     /*for (const auto& current: aretesCroissante)std::cout << current << " / ";
     std::cout << std::endl;*/
 
-    unsigned int nbAdd = 1;
-    unsigned int boucle = 0;
+    unsigned int nbAdd = 1; /// on compte le nombre d'arete pour savoir quand tous les sommets sont reliés
+    unsigned int boucle = 0; /// en fonction du nombre de boucle qu'on a fait on peut savoir qu'elle arete sélectionner (par ordre croissant)
     while (nbAdd < sommets.size()){
 
         //std::cout << "-------------------------------------------" << std::endl;
         auto it = aretes.find(aretesCroissante[boucle]);
-
         //std::cout << "Index de l'aretes en cours " << it->second->getIndex() << std::endl;
-
-        int s1 = sommetsConnexe[it->second->getS1()];
-        int s2 = sommetsConnexe[it->second->getS2()];
-        if ( (s1 != s2) && (aretesFinaux.find(it->second->getIndex()) == aretesFinaux.end()) ){
-
+        int s1 = sommetsConnexe[it->second->getS1()]; /// on sélectionne le sommet 1 de l'arete
+        int s2 = sommetsConnexe[it->second->getS2()]; /// on sélectionne le sommet 2 de l'arete
+        if ( (s1 != s2) && (aretesFinaux.find(it->second->getIndex()) == aretesFinaux.end()) ){ /// si les sommets 1 et 2 ne sont pas connexes et qu'on peut ajouter l'arete alors:
             nbAdd++;
             //std::cout << "on insere l'arete: " << it->second->getIndex() << std::endl;
             aretesFinaux.insert(*it);
-
             for (unsigned int i=0 ; i<sommetsConnexe.size() ; ++i){
-
                 if (sommetsConnexe[i] == s2){
                     //std::cout << "on modifie la valeur " << i << " de " << s2 << " a " << s1 <<  std::endl;
-                    sommetsConnexe[i] = s1;
+                    sommetsConnexe[i] = s1; /// on met tous les sommets de même connexité que le sommet 2 à la valeur de connexité du sommet 1
                 }
             }
-
             /*std::cout << "tableau de connexite     ";
             for (const auto& i:sommetsConnexe)std::cout << i << '/';
             std::cout << std::endl;*/
