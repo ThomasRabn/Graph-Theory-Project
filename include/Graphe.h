@@ -20,12 +20,13 @@ class Graphe
     std::unordered_map<int, Arete*> getAretes() const { return m_aretes; }
 
     /// Affichage
-    void dessiner(Svgfile& svgout);
+    void dessiner(Svgfile& svgout, int x = 0, int y = 0);
 
     ~Graphe();
 
     /// Algorithme
     Graphe parcourKruskal(unsigned int indexOfPoids);
+    std::vector<Graphe*> ensembleGraphesPartiels();
 
 
   protected:

@@ -135,17 +135,61 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     return myGraphe;
 }
 
-void Graphe::dessiner(Svgfile& svgout) {
+/// Retourne un vecteur de Graphes contenant tous le sous-graphes possibles
+std::vector<Graphe*> Graphe::ensembleGraphesPartiels() {
+    std::vector<Graphe*> graphesPartiels;
+    std::vector<bool> etats, allTrue;
+    std::vector<bool> changementEtat; // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
+    for(unsigned int i = 0; i < m_aretes.size(); ++i) {
+        etats.push_back(0);
+        allTrue.push_back(1);
+        changementEtat.push_back(0);
+    }
+    bool run = 1;
+    while(run) {
+        std::unordered_map<int, Arete*> aretes;
+        unsigned int compteur = 0; /// Permet de trouver l'arete que l'on veut dans la map d'arete (est un id arbitraire)
+        //std::cout << std::endl;
+        for(const auto& it : etats) {
+            //std::cout << it;
+            if(it) {
+                Arete* areteCourante = m_aretes.find(compteur)->second;
+                /*int id = areteCourante->getIndex();
+                int sommet1 = areteCourante->getS1();
+                int sommet2 = areteCourante->getS2();
+                std::vector<float> vecPoids = areteCourante->getPoids();*/
+                aretes.insert({ areteCourante->getIndex(), areteCourante });
+            }
+            compteur++;
+        }
+        graphesPartiels.push_back(new Graphe{m_sommets, aretes});
+
+        if (etats == allTrue)   run = 0; // Arrete la boucle si on a fait tous les tests
+        else{ /// Augmente de 1 la valeur binaire enregistrée dans le tableau de booléens (Poids le plus lourd a la fin)
+            for(unsigned int i = 0; i < etats.size(); ++i) {
+                changementEtat[i] = 0;
+                if (i == 0)  { etats[i] = !etats[i]; changementEtat[i] = 1; }
+                else{
+                    if ((changementEtat[i-1] == 1) && (etats[i-1] == 0))    { etats[i] = !etats[i]; changementEtat[i] = 1; }
+                }
+            }
+        }
+    }
+
+    return graphesPartiels;
+}
+
+void Graphe::dessiner(Svgfile& svgout, int x, int y) {
     int s1, s2, x1, y1, x2, y2;
     /// DESSIN DES ARETES
     for(const auto& it : m_aretes) {
         /// On prend les infos
         s1 = it.second->getS1();
         s2 = it.second->getS2();
-        x1 = m_sommets.find(s1)->second->getX();
-        y1 = m_sommets.find(s1)->second->getY();
-        x2 = m_sommets.find(s2)->second->getX();
-        y2 = m_sommets.find(s2)->second->getY();
+        x1 = m_sommets.find(s1)->second->getX()+x;
+        y1 = m_sommets.find(s1)->second->getY()+y;
+        x2 = m_sommets.find(s2)->second->getX()+x;
+        y2 = m_sommets.find(s2)->second->getY()+y;
 
         /// On dessine une ligne
         svgout.addLine(x1, y1, x2, y2);
@@ -172,11 +216,19 @@ void Graphe::dessiner(Svgfile& svgout) {
 
     /// DESSIN DES SOMMETS
     for(const auto& it : m_sommets) {
-        x1 = it.second->getX();
-        y1 = it.second->getY();
+        x1 = it.second->getX()+x;
+        y1 = it.second->getY()+y;
         svgout.addDisk(x1, y1, 7);
     }
 }
 
 Graphe::~Graphe()
-{}
+{
+    /*
+    for(auto& ptr : m_sommets) {
+        delete ptr.second;
+    }
+    for(auto& ptr : m_aretes) {
+        delete ptr.second;
+    }*/
+}

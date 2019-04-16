@@ -27,7 +27,7 @@ class Sommet
     /// Permet d'afficher en console les aretes adjacentes � un sommet
     void afficherAretes()const;
 
-    ~Sommet();
+    ~Sommet() = default;
 
   private:
     int m_index, m_x, m_y;  /// L'index du Sommet pour son r�f�rencement et les coordonn�es du Sommet en X/Y
