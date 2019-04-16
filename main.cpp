@@ -9,7 +9,7 @@
 int main()
 {
     Svgfile svgout;
-    Graphe myGraphe{"files/broadway.txt", "files/broadway_weights_0.txt"};
+    Graphe myGraphe{"files/cubetown.txt", "files/cubetown_weights_0.txt"};
     Graphe test = myGraphe.parcourKruskal(0);
     test.dessiner(svgout);
     return 0;

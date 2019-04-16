@@ -5,6 +5,7 @@
 #include <stack>
 #include <unordered_map>
 #include <map>
+#include <utility>
 #include <unordered_set>
 #include <algorithm>
 
@@ -74,10 +75,11 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     std::unordered_map<int, Sommet*> sommets = getSommets();
     std::unordered_map<int, Arete*> aretes = getAretes();
     std::unordered_map<int, Arete*> aretesFinaux;
-    std::map<int, int> sommetsConnexe;
     std::vector<int> aretesCroissante;
 
-    while (!aretes.empty()){
+    std::vector<int> sommetsConnexe; /// l'indice du vector est le numéro du sommet et sa valeur est son indice de connexité
+
+    while (!aretes.empty()){ /// dans cette boucle on tries les arètes en fonction de leurs poids
         float minP = aretes.begin()->second->getPoids(indexOfPoids);
         int minId = aretes.begin()->second->getIndex();
 
@@ -90,53 +92,51 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
         aretesCroissante.push_back(minId);
         aretes.erase(aretes.find(minId));
     }
-
-
     aretes = getAretes(); /// pour reprendre le tableau car on vient de le modifier
-    for (const auto& it: sommets){
-      sommetsConnexe.insert({it.second->getIndex(), it.second->getIndex()}); ///première valeur pour l'index du sommet et la seconde valeur pour sa "couleur"
+
+    for (const auto& it: sommets){/// on insère dans le vector les index des sommets
+      sommetsConnexe.push_back(it.second->getIndex()); ///première valeur pour l'index du sommet et la seconde valeur pour sa "couleur"
     }
+    std::sort(sommetsConnexe.begin(), sommetsConnexe.end()); /// on trie le vector pour alligner l'indice à sa valeur de connexité
+
+    /*for (const auto& current: aretesCroissante)std::cout << current << " / ";
+    std::cout << std::endl;*/
 
     unsigned int nbAdd = 1;
+    unsigned int boucle = 0;
     while (nbAdd < sommets.size()){
-        std::cout << "-------------------------------------------" << std::endl;
-        for (const auto& current: aretesCroissante){
 
-          auto it = aretes.find(aretesCroissante[current]);
+        //std::cout << "-------------------------------------------" << std::endl;
+        auto it = aretes.find(aretesCroissante[boucle]);
 
-          std::cout << "Index de l'aretes en cours " << it->second->getIndex() << std::endl;
-          int s1 = sommetsConnexe.find(it->second->getS1())->second;
-          int s2 = sommetsConnexe.find(it->second->getS2())->second;
-          if ( (s1 != s2) && (aretesFinaux.find(it->second->getIndex()) == aretesFinaux.end()) ){
+        //std::cout << "Index de l'aretes en cours " << it->second->getIndex() << std::endl;
 
+        int s1 = sommetsConnexe[it->second->getS1()];
+        int s2 = sommetsConnexe[it->second->getS2()];
+        if ( (s1 != s2) && (aretesFinaux.find(it->second->getIndex()) == aretesFinaux.end()) ){
 
-            std::cout << "s1 avant " << s1 << " s2 avant " << s2 << std::endl;
             nbAdd++;
+            //std::cout << "on insere l'arete: " << it->second->getIndex() << std::endl;
             aretesFinaux.insert(*it);
-            for (auto its: sommetsConnexe){
-              if ( its.second == s2){
-                std::cout << " modif for avant " << its.second << " apres " << its.second << std::endl;
-                sommetsConnexe.find(its.second)->second = sommetsConnexe.find(it->second->getS1())->second;
-              }
+
+            for (unsigned int i=0 ; i<sommetsConnexe.size() ; ++i){
+
+                if (sommetsConnexe[i] == s2){
+                    //std::cout << "on modifie la valeur " << i << " de " << s2 << " a " << s1 <<  std::endl;
+                    sommetsConnexe[i] = s1;
+                }
             }
-            sommetsConnexe.find(it->second->getS2())->second = sommetsConnexe.find(it->second->getS1())->second;
 
-            std::cout << "Ajout d'une arete: " << it->second->getIndex() << std::endl;
-            std::cout << "nbAdd =  " << nbAdd << std::endl;
-            std::cout << "s1 apres " << sommetsConnexe.find(it->second->getS1())->second << " s2 apres " << sommetsConnexe.find(it->second->getS1())->second << std::endl;
-            for (const auto& i:sommetsConnexe)std::cout << i.second << '/';
-
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << std::endl;
-
-          }
+            /*std::cout << "tableau de connexite     ";
+            for (const auto& i:sommetsConnexe)std::cout << i << '/';
+            std::cout << std::endl;*/
         }
+        boucle++;
     }
-    for (const auto& i:sommetsConnexe)std::cout << i.second << '/';
+    /*std::cout << "tableau de connexite     ";
+    for (const auto& i:sommetsConnexe)std::cout << i << '/';
     std::cout << std::endl;
-    for (const auto& i:aretesFinaux)std::cout << i.second->getIndex() << '/';
+    for (const auto& i:aretesFinaux)std::cout << i.second->getIndex() << '/';*/
     Graphe myGraphe {sommets, aretesFinaux};
     return myGraphe;
 }
