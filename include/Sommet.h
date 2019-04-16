@@ -9,6 +9,8 @@ class Sommet
   public:
     Sommet(int index, int x, int y);
 
+    void setIndex(int index) { m_index = index; }
+
     /// GETTERS
     int getIndex() const { return m_index; }
     int getX() const { return m_x; }
@@ -22,13 +24,13 @@ class Sommet
     /// Permet d'ajouter une arete dans le vecteur d'arete du sommet
     void addArete(int arete);
 
-    /// Permet d'afficher en console les aretes adjacentes à un sommet
+    /// Permet d'afficher en console les aretes adjacentes ï¿½ un sommet
     void afficherAretes()const;
 
     ~Sommet();
 
   private:
-    int m_index, m_x, m_y;  /// L'index du Sommet pour son référencement et les coordonnées du Sommet en X/Y
+    int m_index, m_x, m_y;  /// L'index du Sommet pour son rï¿½fï¿½rencement et les coordonnï¿½es du Sommet en X/Y
     std::vector<int> m_aretesSommet; /// Vecteur d'aretes adjacentes
 };
 

@@ -13,6 +13,7 @@ class Graphe
 {
   public:
     Graphe(std::string nomFichier, std::string nomFichier2);
+    Graphe(std::unordered_map<int, Sommet*> m_sommets, std::unordered_map<int, Arete*> m_aretes);
 
     /// GETTERS
     std::unordered_map<int, Sommet*> getSommets() const { return m_sommets; }
@@ -24,14 +25,15 @@ class Graphe
     ~Graphe();
 
     /// Algorithme
-    Graphe parcourKruskal();
+    Graphe parcourKruskal(unsigned int indexOfPoids);
     std::vector<Graphe> ensembleSousGraphes()const;
+
 
   protected:
 
   private:
       std::unordered_map<int, Sommet*> m_sommets; /// L'ensemble des Sommets qui composent le graphe
-      std::unordered_map<int, Arete*> m_aretes;   /// L'ensemble des Arêtes qui composent le graphe
+      std::unordered_map<int, Arete*> m_aretes;   /// L'ensemble des Arï¿½tes qui composent le graphe
 };
 
 #endif // GRAPHE_H

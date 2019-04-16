@@ -1,5 +1,12 @@
 #include "Graphe.h"
 #include <fstream>
+#include <iostream>
+#include <queue>
+#include <stack>
+#include <unordered_map>
+#include <map>
+#include <unordered_set>
+#include <algorithm>
 
 Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     std::ifstream fichier{nomFichier};
@@ -56,10 +63,71 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
             ((m_aretes.find(id))->second)->addPoids(poids);
         }
     }
+}
 
-    for(const auto& it : m_sommets) {
-        it.second->afficherAretes();
+Graphe::Graphe(std::unordered_map<int, Sommet*> sommets, std::unordered_map<int, Arete*> aretes)
+    :m_sommets{sommets}, m_aretes{aretes}
+{}
+
+Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
+
+    std::unordered_map<int, Sommet*> sommets = getSommets();
+    std::unordered_map<int, Arete*> aretes = getAretes();
+    std::unordered_map<int, Arete*> aretesFinaux;
+    std::map<int, int> sommetsConnexe;
+
+    std::vector<int> aretesCroissante;
+
+    while (!aretes.empty()){
+        float minP = aretes.begin()->second->getPoids(indexOfPoids);
+        int minId = aretes.begin()->second->getIndex();
+
+        for (auto it: aretes){
+          if ( it.second->getPoids(indexOfPoids) < minP){
+            minP = it.second->getPoids(indexOfPoids);
+            minId = it.second->getIndex();
+          }
+        }
+
+        aretesCroissante.push_back(minId);
+        /// Cout test std::cout << "suppr " << minId << std::endl;
+        aretes.erase(aretes.find(minId));
     }
+
+    aretes = getAretes(); /// pour reprendre le tableau car on vient de le modifier
+    for (const auto& it: sommets){
+      sommetsConnexe.insert({it.second->getIndex(), it.second->getIndex()}); ///première valeur pour l'index du sommet et la seconde valeur pour sa "couleur"
+    }
+
+    unsigned int nbAdd = 0;
+
+    while (nbAdd < sommets.size()){
+
+        for (const auto& it: aretes){
+          int s1 = sommetsConnexe.find(it.second->getS1())->second;
+          int s2 = sommetsConnexe.find(it.second->getS2())->second;
+          if ( s1 != s2 ){
+
+            /// Cout test std::cout << "S1 " << s1 << " et S2 " << s2 << std::endl;
+            aretesFinaux.insert(it);
+            sommetsConnexe.find(it.second->getS2())->second = sommetsConnexe.find(it.second->getS1())->second;
+
+            for (auto its: sommetsConnexe){
+              if ( its.second == s2) its.second = s1;
+            }
+
+            /// Cout test std::cout << "S1 " << sommetsConnexe.find(it.second->getS1())->second << " et S2 " << sommetsConnexe.find(it.second->getS2())->second << std::endl;
+            /// Cout test std::cout << "--------------------------" << std::endl;
+
+          }
+        }
+        nbAdd++;
+    }
+
+    /// Cout test for (auto its: sommetsConnexe)std::cout << " valeur final " << its.second << std::endl;
+
+    Graphe myGraphe {sommets, aretesFinaux};
+    return myGraphe;
 }
 
 void Graphe::dessiner(Svgfile& svgout) {
@@ -120,8 +188,3 @@ std::vector<Graphe> Graphe::ensembleSousGraphes()const {
 
 Graphe::~Graphe()
 {}
-
-Graphe Graphe::parcourKruskal() {
-    std::unordered_map<int, Sommet*> sommets = getSommets();
-    std::unordered_map<int, Arete*> aretes = getAretes();
-}
