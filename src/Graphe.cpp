@@ -100,7 +100,6 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
         aretesCroissante.push_back(minId);
         aretes.erase(aretes.find(minId));
     }
-
     /// pour reprendre le tableau car on vient de le modifier
     for(auto it : vecAretes) {
         aretes.insert({it->getIndex(), it});
@@ -110,6 +109,7 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
       sommetsConnexe.push_back(it.second->getIndex()); ///première valeur pour l'index du sommet et la seconde valeur pour sa "couleur"
     }
     std::sort(sommetsConnexe.begin(), sommetsConnexe.end()); /// on trie le vector pour alligner l'indice à sa valeur de connexité
+
 
     /*for (const auto& current: aretesCroissante)std::cout << current << " / ";
     std::cout << std::endl;*/
@@ -144,8 +144,8 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     std::cout << std::endl;
     for (const auto& i:aretesFinaux)std::cout << i.second->getIndex() << '/';*/
     std::vector<Arete*> vecAretesFinales;
-    for(unsigned int i = 0; i < aretesFinaux.size(); ++i) {
-        vecAretesFinales.push_back(aretesFinaux.find(i)->second);
+    for (auto it: aretesFinaux){
+      vecAretesFinales.push_back(it.second);
     }
     Graphe myGraphe {vecSommets, vecAretesFinales};
     return myGraphe;
