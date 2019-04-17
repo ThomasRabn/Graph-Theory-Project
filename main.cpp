@@ -8,7 +8,7 @@
 int main()
 {
     int x = 0, y = 0;
-    Graphe myGraphe{"files/manhattan.txt", "files/manhattan_weights_0.txt"};
+    Graphe myGraphe{"files/triville.txt", "files/triville_weights_0.txt"};
     if(1) {
         Svgfile svgout;
         myGraphe.dessiner(svgout);

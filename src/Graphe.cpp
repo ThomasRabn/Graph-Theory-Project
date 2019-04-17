@@ -26,7 +26,7 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
         fichier >> id;  if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'id du sommet " + i);
         fichier >> x;   if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'abscisse du sommet " + i);
         fichier >> y;   if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'ordonnée du sommet " + i);
-        m_sommets.insert({id,new Sommet{id,x,y}});
+        m_sommets.push_back(new Sommet{id,x,y});
     }
 
     /// On vérifie que les tailles sont les memes
@@ -48,9 +48,9 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
         fichier >> s1;      if(fichier.fail()) throw std::runtime_error("Probleme de lecture du sommet 1 de l'arete " + i);
         fichier >> s2;      if(fichier.fail()) throw std::runtime_error("Probleme de lecture du sommet 2 de l'arete " + i);
         /// On insert les infos
-        m_aretes.insert({id,new Arete{id,s1,s2}}); // On ajoute le numero l'arete dans le tableau
-        m_sommets.find(s1)->second->addArete(id);  // On ajoute le numero de l'arete dans le sommet 1
-        m_sommets.find(s2)->second->addArete(id);  // On ajoute le numero de l'arete dans le sommet 2
+        m_aretes.push_back(new Arete{id,s1,s2}); // On ajoute le numero l'arete dans le tableau
+        m_sommets[s1]->addArete(id);             // On ajoute le numero de l'arete dans le sommet 1
+        m_sommets[s2]->addArete(id);             // On ajoute le numero de l'arete dans le sommet 2
     }
 
     /// On ajoute le poids des aretes
@@ -61,23 +61,31 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
         fichier2 >> id;
         for(int j = 0; j < nbrPoids; ++j){
             fichier2 >> poids;
-            ((m_aretes.find(id))->second)->addPoids(poids);
+            m_aretes[id]->addPoids(poids);
         }
     }
 }
 
-Graphe::Graphe(std::unordered_map<int, Sommet*> sommets, std::unordered_map<int, Arete*> aretes)
+Graphe::Graphe(std::vector<Sommet*> sommets, std::vector<Arete*> aretes)
     :m_sommets{sommets}, m_aretes{aretes}
 {}
 
 Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
+    std::vector<Sommet*> vecSommets = getSommets();
+    std::vector<Arete*> vecAretes = getAretes();
 
-    std::unordered_map<int, Sommet*> sommets = getSommets();
-    std::unordered_map<int, Arete*> aretes = getAretes();
+    std::unordered_map<int, Sommet*> sommets;
+    std::unordered_map<int, Arete*> aretes;
     std::unordered_map<int, Arete*> aretesFinaux;
     std::vector<int> aretesCroissante;
-
     std::vector<int> sommetsConnexe; /// l'indice du vector est le numéro du sommet et sa valeur est son indice de connexité
+
+      for(auto it : vecSommets) {
+        sommets.insert({it->getIndex(), it});
+      }
+      for(auto it : vecAretes) {
+        aretes.insert({it->getIndex(), it});
+      }
 
     while (!aretes.empty()){ /// dans cette boucle on tries les arètes en fonction de leurs poids
         float minP = aretes.begin()->second->getPoids(indexOfPoids);
@@ -92,7 +100,11 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
         aretesCroissante.push_back(minId);
         aretes.erase(aretes.find(minId));
     }
-    aretes = getAretes(); /// pour reprendre le tableau car on vient de le modifier
+
+    /// pour reprendre le tableau car on vient de le modifier
+    for(auto it : vecAretes) {
+        aretes.insert({it->getIndex(), it});
+      }
 
     for (const auto& it: sommets){/// on insère dans le vector les index des sommets
       sommetsConnexe.push_back(it.second->getIndex()); ///première valeur pour l'index du sommet et la seconde valeur pour sa "couleur"
@@ -131,7 +143,11 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     for (const auto& i:sommetsConnexe)std::cout << i << '/';
     std::cout << std::endl;
     for (const auto& i:aretesFinaux)std::cout << i.second->getIndex() << '/';*/
-    Graphe myGraphe {sommets, aretesFinaux};
+    std::vector<Arete*> vecAretesFinales;
+    for(unsigned int i = 0; i < aretesFinaux.size(); ++i) {
+        vecAretesFinales.push_back(aretesFinaux.find(i)->second);
+    }
+    Graphe myGraphe {vecSommets, vecAretesFinales};
     return myGraphe;
 }
 
@@ -147,21 +163,18 @@ std::vector<Graphe*> Graphe::ensembleGraphesPartiels() {
     }
     bool run = 1;
     while(run) {
-        std::unordered_map<int, Arete*> aretes;
+        std::vector<Arete*> aretes;
         unsigned int compteur = 0; /// Permet de trouver l'arete que l'on veut dans la map d'arete (est un id arbitraire)
         //std::cout << std::endl;
         for(const auto& it : etats) {
             //std::cout << it;
             if(it) {
-                Arete* areteCourante = m_aretes.find(compteur)->second;
-                /*int id = areteCourante->getIndex();
-                int sommet1 = areteCourante->getS1();
-                int sommet2 = areteCourante->getS2();
-                std::vector<float> vecPoids = areteCourante->getPoids();*/
-                aretes.insert({ areteCourante->getIndex(), areteCourante });
+                Arete* areteCourante = m_aretes[compteur];
+                aretes.push_back(areteCourante);
             }
             compteur++;
         }
+
         graphesPartiels.push_back(new Graphe{m_sommets, aretes});
 
         if (etats == allTrue)   run = 0; // Arrete la boucle si on a fait tous les tests
@@ -184,20 +197,20 @@ void Graphe::dessiner(Svgfile& svgout, int x, int y) {
     /// DESSIN DES ARETES
     for(const auto& it : m_aretes) {
         /// On prend les infos
-        s1 = it.second->getS1();
-        s2 = it.second->getS2();
-        x1 = m_sommets.find(s1)->second->getX()+x;
-        y1 = m_sommets.find(s1)->second->getY()+y;
-        x2 = m_sommets.find(s2)->second->getX()+x;
-        y2 = m_sommets.find(s2)->second->getY()+y;
+        s1 = it->getS1();
+        s2 = it->getS2();
+        x1 = m_sommets[s1]->getX()+x;
+        y1 = m_sommets[s1]->getY()+y;
+        x2 = m_sommets[s2]->getX()+x;
+        y2 = m_sommets[s2]->getY()+y;
 
         /// On dessine une ligne
         svgout.addLine(x1, y1, x2, y2);
         int dy = y2-y1;
-        std::string poids = "(";
 
+        std::string poids = "(";
         /// Affichage du poids
-        std::vector<float> vecPoids = it.second->getPoids();
+        std::vector<float> vecPoids = it->getPoids();
         for(unsigned int i = 0; i < vecPoids.size(); ++i) {
             std::stringstream number;
             number << std::fixed << std::setprecision(2) << vecPoids[i];
@@ -216,8 +229,8 @@ void Graphe::dessiner(Svgfile& svgout, int x, int y) {
 
     /// DESSIN DES SOMMETS
     for(const auto& it : m_sommets) {
-        x1 = it.second->getX()+x;
-        y1 = it.second->getY()+y;
+        x1 = it->getX()+x;
+        y1 = it->getY()+y;
         svgout.addDisk(x1, y1, 7);
     }
 }
