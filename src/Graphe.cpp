@@ -142,12 +142,11 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     return myGraphe;
 }
 
-/// Retourne un vecteur de Graphes contenant tous le sous-graphes possibles
+/// Retourne un vecteur de bool contenant tous le sous-graphes de Ordre-1 aretes. vec[i] = 1 -> arete n°i ajoutee.
 std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
-    unsigned int nbrAretes = 0; // Suit le nombre d'aretes presentes dans le graphe partiels créé
     std::vector<std::vector<bool>*> graphesPartiels;
     std::vector<bool> etats (m_aretes.size(), 0), allTrue(m_aretes.size(), 1);
-    std::vector<bool> changementEtat(m_aretes.size(), 0); // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
+    unsigned int nbrAretes = 0; // Suit le nombre d'aretes presentes dans le graphe partiel créé
     bool run = 1;
 
     while(run) {
@@ -155,14 +154,9 @@ std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
 
         if (etats == allTrue)   run = 0; // Arrete la boucle si on a fait tous les tests
         else{ /// Augmente de 1 la valeur binaire enregistrée dans le tableau de booléens (Poids le plus lourd a la fin)
-            nbrAretes = 0;
-            etats[0] = !etats[0];
-            changementEtat[0] = 1;
-            if(etats[0])    nbrAretes++;
-            for(unsigned int i = 1; i < etats.size(); ++i) {
-                changementEtat[i] = 0;
-                if ((changementEtat[i-1]) && (!(etats[i-1])))    { etats[i] = !etats[i]; changementEtat[i] = 1; }
-                if(etats[i])   nbrAretes++;
+            for(unsigned int i = 0; i < etats.size(); ++i) {
+                if(etats[i])    { etats[i] = 0; nbrAretes--; }
+                else            { etats[i] = 1; nbrAretes++; break; }
             }
         }
     }
