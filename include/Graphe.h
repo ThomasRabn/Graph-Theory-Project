@@ -26,12 +26,16 @@ class Graphe
 
     ~Graphe();
 
-    /// Algorithme
-    std::vector<float> resultatGraphe(); /// nous retourne un tableau de float qui correspond au résultat du graphe
-                                         /// en fonction de chacun des poids possibles
+    /// Algorithmes
+
+    /// nous retourne un tableau de float qui correspond au résultat du grapheen fonction de chacun des poids possibles
+    std::vector<float> resultatGraphe();
+    /// Retourne comme la fonction non overload mais permet de prendre en compte un tableau de bool (1 = arete prise en compte; 0 = pas prise en compte)
+    std::vector<float> resultatGraphe(std::vector<bool> vecBool);
     Graphe parcourKruskal(unsigned int indexOfPoids);
     std::vector<std::vector<bool>*> ensembleGraphesPartiels();
-
+    std::vector<std::vector<bool>*> ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec);
+    void affichagePareto();
 
   protected:
 

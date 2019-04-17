@@ -207,15 +207,89 @@ void Graphe::dessiner(Svgfile& svgout, int x, int y) {
     }
 }
 
-std::vector<float> Graphe::resultatGraphe(){
-    int nbPoids = this->getAretes()[0]->getNbPoids(); /// on obtient le nombre de poids que les arètes possèdent
-    std::vector<float> resultatPoids(nbPoids,0);
-    for (int i = 0 ; i<nbPoids ; ++i){
-        for (auto it: this->getAretes()){
-            resultatPoids[i] += it->getPoids(i);
+std::vector<float> Graphe::resultatGraphe() {
+    std::vector<bool> vecBool (m_aretes.size(), 1);
+    return resultatGraphe(vecBool);
+}
+
+std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
+    if (!(getAretes().empty())) {
+        int nbPoids = getAretes()[0]->getNbPoids(); /// on obtient le nombre de poids que les arètes possèdent
+        std::vector<float> resultatPoids(nbPoids,0);
+        for (int i = 0 ; i<nbPoids ; ++i) {
+            for (unsigned int j = 0; j < getAretes().size(); ++j) {
+                if(vecBool[j])  { resultatPoids[i] += m_aretes[j]->getPoids(i); }
+            }
+        }
+        return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
+    } else{
+
+        std::vector<float> resultatPoids;
+        return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
+    }
+}
+
+std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec) {
+    std::vector<std::vector<bool>*> arbresCouvrants; // Vecteur stockant tous les pointeurs vers vecteur de booleens permettant de savoir quelles aretes on ajoute
+    std::vector<int> allRight(m_sommets.size(), 0);
+    int indiceVec1 = 0; // int permettant d'acceder a une case specifique du tableau pour les sommets
+    int indiceVec2 = 0;
+    for(unsigned int i = 0; i < vec.size(); ++i) { // Pour chaque configuration
+        std::vector<int> vecSommets; // On crée un tableau ne contenant aucun sommet
+        for(unsigned int k = 0; k < m_sommets.size(); ++k) {
+            vecSommets.push_back(k);
+        }
+
+        for (unsigned int j = 0; j < (*(vec[i])).size(); ++j) { // Pour chaque arete
+            if ((*(vec[i]))[j]) { // Si l'arete existe on ajoute les sommets qui sont reliés
+                indiceVec1 = getAretes()[j]->getS1();
+                indiceVec2 = getAretes()[j]->getS2();
+                if (vecSommets[indiceVec1]<vecSommets[indiceVec2]) {
+                    for(unsigned int l = 0; l < vecSommets.size(); l++) {
+                        if((vecSommets[l] == vecSommets[indiceVec2])&&((int)l != indiceVec2)) { vecSommets[l] = vecSommets[indiceVec1]; }
+                    }
+                    vecSommets[indiceVec2] = vecSommets[indiceVec1];
+                }
+                else {
+                    for(unsigned int l = indiceVec1+1; l < vecSommets.size(); l++) {
+                        if((vecSommets[l] == vecSommets[indiceVec1])&&((int)l != indiceVec2)) { vecSommets[l] = vecSommets[indiceVec2]; }
+                    }
+                    vecSommets[indiceVec1] = vecSommets[indiceVec2];
+                }
+                if (vecSommets == allRight)         { arbresCouvrants.push_back(vec[i]); } // Si tous les sommets sont ajoutes on ajoute la configuration a arbresCouvrants et on sort de la boucle
+            }
+            for(unsigned int tour = 0; tour < vecSommets.size(); tour++) {
+            }
         }
     }
-    return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
+    return arbresCouvrants;
+}
+
+void Graphe::affichagePareto() {
+    int x = 0, y = 0;
+    std::vector<std::vector<bool>*> vecSolutionsTaille = ensembleGraphesPartiels();
+    std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille);
+
+    std::cout << "Nombre de graphes contenant le bon nombre d'aretes : " << vecSolutionsTaille.size() << std::endl;
+    std::cout << "Nombre d'arbres couvrants : " << vecSolutionsCouvrantes.size() << std::endl;
+
+    Svgfile svgout("output.svg", 5000, 1000000);
+    std::vector<Arete*> aretesPartielles;
+    for(unsigned int i = 0; i < 5; ++i) {
+        aretesPartielles.clear();
+        for (unsigned int j = 0; j < (*(vecSolutionsCouvrantes[i])).size(); ++j) {
+            if ((*(vecSolutionsCouvrantes[i]))[j]) aretesPartielles.push_back((getAretes())[j]);
+        }
+        Graphe graphePartiel{ getSommets(), aretesPartielles};
+        graphePartiel.dessiner(svgout, x , y);
+        if ((i+1)%6 == 0)   { y+=450; x = 0; }
+        else                { x+=450; }
+    }
+
+    /// On désalloue la mémoire (on ne désalloue pas vecSolutionsCouvrantes car il est inclu dans vecSolutionTaille)
+    for(auto& ptr : vecSolutionsTaille) {
+        delete ptr;
+    }
 }
 
 Graphe::~Graphe()
