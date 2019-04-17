@@ -207,10 +207,20 @@ void Graphe::dessiner(Svgfile& svgout, int x, int y) {
     }
 }
 
+std::vector<float> Graphe::resultatGraphe(){
+    int nbPoids = this->getAretes()[0]->getNbPoids(); /// on obtient le nombre de poids que les arètes possèdent
+    std::vector<float> resultatPoids(nbPoids,0);
+    for (int i = 0 ; i<nbPoids ; ++i){
+        for (auto it: this->getAretes()){
+            resultatPoids[i] += it->getPoids(i);
+        }
+    }
+    return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
+}
+
 Graphe::~Graphe()
 {
-    /*
-    for(auto& ptr : m_sommets) {
+    /*for(auto& ptr : m_sommets) {
         delete ptr.second;
     }
     for(auto& ptr : m_aretes) {

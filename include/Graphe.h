@@ -27,6 +27,8 @@ class Graphe
     ~Graphe();
 
     /// Algorithme
+    std::vector<float> resultatGraphe(); /// nous retourne un tableau de float qui correspond au résultat du graphe
+                                         /// en fonction de chacun des poids possibles
     Graphe parcourKruskal(unsigned int indexOfPoids);
     std::vector<std::vector<bool>*> ensembleGraphesPartiels();
 
