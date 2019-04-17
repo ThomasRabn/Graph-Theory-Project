@@ -4,8 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
-#include <iomanip> // setprecision
-#include <sstream> // stringstream
+#include <iomanip>
+#include <sstream>
+#include <algorithm>
 #include "Sommet.h"
 #include "Arete.h"
 #include "svgfile.h"

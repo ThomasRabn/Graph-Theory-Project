@@ -1,13 +1,4 @@
 #include "Graphe.h"
-#include <fstream>
-#include <iostream>
-#include <queue>
-#include <stack>
-#include <unordered_map>
-#include <map>
-#include <utility>
-#include <unordered_set>
-#include <algorithm>
 
 Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     std::ifstream fichier{nomFichier};
@@ -155,29 +146,11 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
 std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
     unsigned int nbrAretes = 0; // Suit le nombre d'aretes presentes dans le graphe partiels créé
     std::vector<std::vector<bool>*> graphesPartiels;
-    //std::vector<Graphe*> graphesPartiels;
-    std::vector<bool> etats, allTrue;
-    std::vector<bool> changementEtat; // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
-    for(unsigned int i = 0; i < m_aretes.size(); ++i) {
-        etats.push_back(0);
-        allTrue.push_back(1);
-        changementEtat.push_back(0);
-    }
+    std::vector<bool> etats (m_aretes.size(), 0), allTrue(m_aretes.size(), 1);
+    std::vector<bool> changementEtat(m_aretes.size(), 0); // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
     bool run = 1;
-    while(run) {
-        std::vector<Arete*> aretes;
-        unsigned int compteur = 0; /// Permet de trouver l'arete que l'on veut dans la map d'arete (est un id arbitraire)
-        //std::cout << std::endl;
-        for(const auto& it : etats) {
-            //std::cout << it;
-            if(it) {
-                Arete* areteCourante = m_aretes[compteur];
-                aretes.push_back(areteCourante);
-            }
-            compteur++;
-        }
 
-        //graphesPartiels.push_back(new Graphe{m_sommets, aretes});
+    while(run) {
         if (nbrAretes == m_sommets.size()-1)    graphesPartiels.push_back(new std::vector<bool>{etats});
 
         if (etats == allTrue)   run = 0; // Arrete la boucle si on a fait tous les tests
@@ -185,13 +158,15 @@ std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
             nbrAretes = 0;
             etats[0] = !etats[0];
             changementEtat[0] = 1;
+            if(etats[0])    nbrAretes++;
             for(unsigned int i = 1; i < etats.size(); ++i) {
                 changementEtat[i] = 0;
-                if ((changementEtat[i-1] == 1) && (etats[i-1] == 0))    { etats[i] = !etats[i]; changementEtat[i] = 1; }
-                if(etats[i] == 1)   nbrAretes++;
+                if ((changementEtat[i-1]) && (!(etats[i-1])))    { etats[i] = !etats[i]; changementEtat[i] = 1; }
+                if(etats[i])   nbrAretes++;
             }
         }
     }
+
     return graphesPartiels;
 }
 
