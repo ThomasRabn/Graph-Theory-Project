@@ -152,8 +152,10 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
 }
 
 /// Retourne un vecteur de Graphes contenant tous le sous-graphes possibles
-std::vector<Graphe*> Graphe::ensembleGraphesPartiels() {
-    std::vector<Graphe*> graphesPartiels;
+std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
+    unsigned int nbrAretes = 0; // Suit le nombre d'aretes presentes dans le graphe partiels créé
+    std::vector<std::vector<bool>*> graphesPartiels;
+    //std::vector<Graphe*> graphesPartiels;
     std::vector<bool> etats, allTrue;
     std::vector<bool> changementEtat; // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
     for(unsigned int i = 0; i < m_aretes.size(); ++i) {
@@ -175,20 +177,21 @@ std::vector<Graphe*> Graphe::ensembleGraphesPartiels() {
             compteur++;
         }
 
-        graphesPartiels.push_back(new Graphe{m_sommets, aretes});
+        //graphesPartiels.push_back(new Graphe{m_sommets, aretes});
+        if (nbrAretes == m_sommets.size()-1)    graphesPartiels.push_back(new std::vector<bool>{etats});
 
         if (etats == allTrue)   run = 0; // Arrete la boucle si on a fait tous les tests
         else{ /// Augmente de 1 la valeur binaire enregistrée dans le tableau de booléens (Poids le plus lourd a la fin)
-            for(unsigned int i = 0; i < etats.size(); ++i) {
+            nbrAretes = 0;
+            etats[0] = !etats[0];
+            changementEtat[0] = 1;
+            for(unsigned int i = 1; i < etats.size(); ++i) {
                 changementEtat[i] = 0;
-                if (i == 0)  { etats[i] = !etats[i]; changementEtat[i] = 1; }
-                else{
-                    if ((changementEtat[i-1] == 1) && (etats[i-1] == 0))    { etats[i] = !etats[i]; changementEtat[i] = 1; }
-                }
+                if ((changementEtat[i-1] == 1) && (etats[i-1] == 0))    { etats[i] = !etats[i]; changementEtat[i] = 1; }
+                if(etats[i] == 1)   nbrAretes++;
             }
         }
     }
-
     return graphesPartiels;
 }
 

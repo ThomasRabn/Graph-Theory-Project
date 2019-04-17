@@ -106,7 +106,7 @@
 	<iostream>
 	<sstream>
 
-1555498801 source:c:\users\thoma\desktop\projetpiscine\main.cpp
+1555501781 source:c:\users\thoma\desktop\projetpiscine\main.cpp
 	<iostream>
 	"svgfile.h"
 	"Graphe.h"
@@ -119,7 +119,7 @@
 	<fstream>
 	<set>
 
-1555497681 c:\users\thoma\desktop\projetpiscine\include\graphe.h
+1555501788 c:\users\thoma\desktop\projetpiscine\include\graphe.h
 	<iostream>
 	<vector>
 	<unordered_map>
@@ -144,9 +144,17 @@
 	<iostream>
 	<sstream>
 
-1555410890 source:c:\users\thoma\desktop\projetpiscine\src\graphe.cpp
+1555502010 source:c:\users\thoma\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
 	<fstream>
+	<iostream>
+	<queue>
+	<stack>
+	<unordered_map>
+	<map>
+	<utility>
+	<unordered_set>
+	<algorithm>
 
 1555494727 source:c:\users\thoma\desktop\projetpiscine\src\sommet.cpp
 	"Sommet.h"

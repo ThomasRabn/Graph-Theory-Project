@@ -27,7 +27,7 @@ class Graphe
 
     /// Algorithme
     Graphe parcourKruskal(unsigned int indexOfPoids);
-    std::vector<Graphe*> ensembleGraphesPartiels();
+    std::vector<std::vector<bool>*> ensembleGraphesPartiels();
 
 
   protected:
