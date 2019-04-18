@@ -236,8 +236,8 @@ std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std:
     int indiceVec2 = 0;
     for(unsigned int i = 0; i < vec.size(); ++i) { // Pour chaque configuration
         std::vector<int> vecSommets; // On crée un tableau ne contenant aucun sommet
-        for(unsigned int k = 0; k < m_sommets.size(); ++k) {
-            vecSommets.push_back(k);
+        for(unsigned int j = 0; j < m_sommets.size(); ++j) {
+            vecSommets.push_back(j);
         }
 
         for (unsigned int j = 0; j < (*(vec[i])).size(); ++j) { // Pour chaque arete
@@ -251,14 +251,15 @@ std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std:
                     vecSommets[indiceVec2] = vecSommets[indiceVec1];
                 }
                 else {
-                    for(unsigned int l = indiceVec1+1; l < vecSommets.size(); l++) {
-                        if((vecSommets[l] == vecSommets[indiceVec1])&&((int)l != indiceVec2)) { vecSommets[l] = vecSommets[indiceVec2]; }
+                    for(unsigned int l = 0; l < vecSommets.size(); l++) {
+                        if((vecSommets[l] == vecSommets[indiceVec1])&&((int)l != indiceVec1)) { vecSommets[l] = vecSommets[indiceVec2]; }
                     }
                     vecSommets[indiceVec1] = vecSommets[indiceVec2];
                 }
-                if (vecSommets == allRight)         { arbresCouvrants.push_back(vec[i]); } // Si tous les sommets sont ajoutes on ajoute la configuration a arbresCouvrants et on sort de la boucle
-            }
-            for(unsigned int tour = 0; tour < vecSommets.size(); tour++) {
+                for(unsigned int m = 0; m < vecSommets.size(); m++) {
+                }
+
+                if (vecSommets == allRight)         { arbresCouvrants.push_back(vec[i]); break; } // Si tous les sommets sont ajoutes on ajoute la configuration a arbresCouvrants et on sort de la boucle
             }
         }
     }
