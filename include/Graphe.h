@@ -1,8 +1,6 @@
 #ifndef GRAPHE_H
 #define GRAPHE_H
 
-#include <iostream>
-#include <vector>
 #include <unordered_map>
 #include <iomanip>
 #include <sstream>
@@ -36,11 +34,6 @@ class Graphe
     std::vector<std::vector<bool>*> ensembleGraphesPartiels();
     std::vector<std::vector<bool>*> ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec);
     void affichagePareto();
-
-    /// Fonction a passer dans sort pour trier un vecteur de booléens correspondants aux aretes en fonction du poids [0]
-    bool operator() (const std::vector<bool>* &courant, const std::vector<bool>* &suivant) {
-        return resultatGraphe(*(courant))[0] < resultatGraphe(*(suivant))[0];
-    }
 
   protected:
 

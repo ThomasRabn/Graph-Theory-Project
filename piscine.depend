@@ -46,27 +46,24 @@
 	<iostream>
 	<sstream>
 
-1555611739 source:c:\users\thomas\desktop\projetpiscine\main.cpp
+1555623276 source:c:\users\thomas\desktop\projetpiscine\main.cpp
 	"svgfile.h"
 	"Graphe.h"
 
 1555455912 source:c:\users\thomas\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
 
-1555532989 c:\users\thomas\desktop\projetpiscine\include\arete.h
-	<vector>
+1555620885 c:\users\thomas\desktop\projetpiscine\include\arete.h
 	"Sommet.h"
 
 1555455912 c:\users\thomas\desktop\projetpiscine\include\sommet.h
 	<vector>
 	<iostream>
 
-1555611707 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
+1555624129 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
 
-1555603088 c:\users\thomas\desktop\projetpiscine\include\graphe.h
-	<iostream>
-	<vector>
+1555621119 c:\users\thomas\desktop\projetpiscine\include\graphe.h
 	<unordered_map>
 	<iomanip>
 	<sstream>
@@ -157,4 +154,6 @@
 1555428115 source:c:\users\peter\desktop\projetpiscine\src\svgfile.cpp
 	<iostream>
 	<sstream>
+
+1555620664 c:\users\thomas\desktop\projetpiscine\include\utile.h
 

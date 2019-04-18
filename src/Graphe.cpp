@@ -1,5 +1,8 @@
 #include "Graphe.h"
 
+/// FONCTION PERMETTANT DE PASSER D'UN INTERVALLE A UN AUTRE, PRISE SUR LE SITE DE ARDUINO (fonction map())
+float mapping(float x, float in_min, float in_max, float out_min, float out_max)    { return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min; }
+
 Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     std::ifstream fichier{nomFichier};
     std::ifstream fichier2{nomFichier2};
@@ -296,6 +299,8 @@ void Graphe::affichagePareto() {
     std::vector<int> vecIndicesSolutionsNonDominees;
     int xSaved = (*vecPoidsSolutions[0])[0];
     int ySaved = (*vecPoidsSolutions[0])[1];
+    int maxY = ySaved;
+    int minX = xSaved;
     vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[0]).back());
     for(unsigned int i = 1; i < vecPoidsSolutions.size(); ++i) {
         if ((*vecPoidsSolutions[i])[0] != xSaved) {
@@ -306,6 +311,8 @@ void Graphe::affichagePareto() {
             }
         }
     }
+    int maxX = xSaved;
+    int minY = ySaved;
 
     /// AFFICHE EN CONSOLE DES INFOS POUR DEBOGAGE
     std::cout << vecIndicesSolutionsNonDominees.size() << std::endl;
@@ -320,8 +327,41 @@ void Graphe::affichagePareto() {
     }*/
 
     /// Affiche tous les graphes solutions sur un fichier SVG
-    /*Svgfile svgout("output.svg", 5000, 1000000);
-    int x = 0, y = 0;
+    Svgfile svgout("output.svg", 5000, 20000);
+    dessiner(svgout);
+    const int debutX = 800;
+    const int debutY = 100;
+    const int largeur = 800;
+    const int hauteur = 800;
+    svgout.addLine(debutX, hauteur+debutY-30, debutX+largeur, hauteur+debutY-30);
+    svgout.addLine(debutX+30, debutY, debutX+30, debutY+hauteur);
+
+    /// EXPRESSION MATHEMATIQUE TROUVEE SUR LE SITE DE ARDUINO (FONCTION MAP()) : (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+    int rayonFaux, rayonVrai;
+    float coeffBas, coeffHaut; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
+    if(vecSolutionsCouvrantes.size() < 100) {
+        rayonFaux = 2; rayonVrai = 3; coeffBas = 0.25; coeffHaut = 0.5;
+    } else if (vecSolutionsCouvrantes.size() < 1000) {
+        rayonFaux = 2; rayonVrai = 3; coeffBas= 0.1; coeffHaut = 0.65;
+    } else{
+        rayonFaux = 1; rayonVrai = 3; coeffBas = 0.1; coeffHaut = 0.7;
+    }
+
+    for(auto it : vecPoidsSolutions) {
+        float posX = mapping((*it)[0], minX, maxX, debutX+coeffBas*largeur, debutX+largeur-coeffHaut*largeur);
+        float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBas*hauteur, debutY+hauteur-(1-coeffHaut)*hauteur);
+        svgout.addDisk(posX, posY, rayonFaux, 100, svgout.makeRGB(255,0,0));
+    }
+    for(auto it : vecIndicesSolutionsNonDominees) {
+        std::vector<float> vecPoidsNonDominees = resultatGraphe(*(vecSolutionsCouvrantes[it]));
+        float posX = mapping(vecPoidsNonDominees[0], minX, maxX, debutX+coeffBas*largeur, debutX+largeur-coeffHaut*largeur);
+        float posY = mapping(vecPoidsNonDominees[1], minY, maxY, debutY+hauteur-coeffBas*hauteur, debutY+hauteur-(1-coeffHaut)*hauteur);
+        svgout.addDisk(posX, posY, rayonVrai, 100, svgout.makeRGB(0,255,0));
+    }
+
+
+    /*
+    int x = 400, y = 0;
     std::vector<Arete*> aretesPartielles;
     for(unsigned int i = 0; i < vec.size(); ++i) {
         aretesPartielles.clear();
@@ -341,17 +381,7 @@ void Graphe::affichagePareto() {
     for(auto ptr : vecPoidsSolutions) {
         delete ptr;
     }
-    /*for(auto ptr : vecGraphesPartiels) {
-        delete ptr;
-    }*/
 }
 
 Graphe::~Graphe()
-{
-    /*for(auto& ptr : m_sommets) {
-        delete ptr.second;
-    }
-    for(auto& ptr : m_aretes) {
-        delete ptr.second;
-    }*/
-}
+{ }

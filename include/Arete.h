@@ -1,7 +1,6 @@
 #ifndef ARETE_H
 #define ARETE_H
 
-#include <vector>
 #include "Sommet.h"
 
 class Arete
