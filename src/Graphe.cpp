@@ -167,49 +167,6 @@ std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
     return graphesPartiels;
 }
 
-void Graphe::dessiner(Svgfile& svgout, int x, int y) {
-    int s1, s2, x1, y1, x2, y2;
-    /// DESSIN DES ARETES
-    for(const auto& it : m_aretes) {
-        /// On prend les infos
-        s1 = it->getS1();
-        s2 = it->getS2();
-        x1 = m_sommets[s1]->getX()+x;
-        y1 = m_sommets[s1]->getY()+y;
-        x2 = m_sommets[s2]->getX()+x;
-        y2 = m_sommets[s2]->getY()+y;
-
-        /// On dessine une ligne
-        svgout.addLine(x1, y1, x2, y2);
-        int dy = y2-y1;
-
-        std::string poids = "(";
-        /// Affichage du poids
-        std::vector<float> vecPoids = it->getPoids();
-        for(unsigned int i = 0; i < vecPoids.size(); ++i) {
-            std::stringstream number;
-            number << std::fixed << std::setprecision(2) << vecPoids[i];
-            poids.append(number.str());
-            if(i != vecPoids.size()-1)    poids.append(" ; ");
-            else                        poids.append(")");
-        }
-
-        /// Permet de savoir où sur l'écran on affiche le texte
-        if((dy > 5) || (dy < -5)) {
-            svgout.addText(((x1 + x2)/2)+5, ((y1+y2)/2), poids);
-        } else {
-            svgout.addText(((x1 + x2)/2)-50, ((y1+y2)/2)-10, poids);
-        }
-    }
-
-    /// DESSIN DES SOMMETS
-    for(const auto& it : m_sommets) {
-        x1 = it->getX()+x;
-        y1 = it->getY()+y;
-        svgout.addDisk(x1, y1, 7);
-    }
-}
-
 std::vector<float> Graphe::resultatGraphe() {
     std::vector<bool> vecBool (m_aretes.size(), 1);
     return resultatGraphe(vecBool);
@@ -273,9 +230,6 @@ void Graphe::affichagePareto() {
     std::vector<std::vector<bool>*> vecSolutionsTaille = ensembleGraphesPartiels();
     std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille);
 
-    std::cout << "Nombre de graphes contenant le bon nombre d'aretes : " << vecSolutionsTaille.size() << std::endl;
-    std::cout << "Nombre d'arbres couvrants : " << vecSolutionsCouvrantes.size() << std::endl;
-
     /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
     int compteur = 0;
     for(auto it : vecSolutionsCouvrantes) {
@@ -286,7 +240,7 @@ void Graphe::affichagePareto() {
         ++compteur;
     }
 
-    /// On tri le vecteur de poids pour mettre en premier ceux avec le poids[0] le plus petit
+    /// On tri le vecteur de poids pour mettre en premier ceux avec le poids[0] le plus petit (utilisation d'une fonction lambda)
     std::sort(vecPoidsSolutions.begin(), vecPoidsSolutions.end(), [](const auto& cour, const auto& suiv) {
         if ((*cour)[0] != (*suiv)[0]) {
             return (*cour)[0] < (*suiv)[0];
@@ -314,22 +268,10 @@ void Graphe::affichagePareto() {
     int maxX = xSaved;
     int minY = ySaved;
 
-    /// AFFICHE EN CONSOLE DES INFOS POUR DEBOGAGE
-    std::cout << vecIndicesSolutionsNonDominees.size() << std::endl;
-    for(auto it : vecIndicesSolutionsNonDominees) {
-        std::cout << "(" << (resultatGraphe(*(vecSolutionsCouvrantes[it])))[0] << ";" << (resultatGraphe(*(vecSolutionsCouvrantes[it])))[1] << ")" << std::endl;
-    }
-
-
-    /// AFFICHE EN CONSOLE LES POIDS TRIES
-    /*for(auto& it : vecPoidsSolutions) {
-        std::cout << "(" << (*it)[0] << ";" << (*it)[1] << ")" <<std::endl;
-    }*/
-
     /// Affiche tous les graphes solutions sur un fichier SVG
     Svgfile svgout("output.svg", 5000, 20000);
-    dessiner(svgout);
-    const int debutX = 800;
+    dessiner(svgout, 275, -50);
+    const int debutX = 1100;
     const int debutY = 100;
     const int largeur = 800;
     const int hauteur = 800;
@@ -340,11 +282,11 @@ void Graphe::affichagePareto() {
     int rayonFaux, rayonVrai;
     float coeffBas, coeffHaut; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
     if(vecSolutionsCouvrantes.size() < 100) {
-        rayonFaux = 2; rayonVrai = 3; coeffBas = 0.25; coeffHaut = 0.5;
+        rayonFaux = 2; rayonVrai = 5; coeffBas = 0.25; coeffHaut = 0.5;
     } else if (vecSolutionsCouvrantes.size() < 1000) {
-        rayonFaux = 2; rayonVrai = 3; coeffBas= 0.1; coeffHaut = 0.65;
+        rayonFaux = 2; rayonVrai = 5; coeffBas= 0.1; coeffHaut = 0.7;
     } else{
-        rayonFaux = 1; rayonVrai = 3; coeffBas = 0.1; coeffHaut = 0.7;
+        rayonFaux = 1; rayonVrai = 5; coeffBas = 0.1; coeffHaut = 0.7;
     }
 
     for(auto it : vecPoidsSolutions) {
@@ -359,20 +301,22 @@ void Graphe::affichagePareto() {
         svgout.addDisk(posX, posY, rayonVrai, 100, svgout.makeRGB(0,255,0));
     }
 
-
-    /*
-    int x = 400, y = 0;
-    std::vector<Arete*> aretesPartielles;
-    for(unsigned int i = 0; i < vec.size(); ++i) {
-        aretesPartielles.clear();
-        for (unsigned int j = 0; j < (*(vecSolutionsCouvrantes[i])).size(); ++j) {
-            if ((*(vecSolutionsCouvrantes[i]))[j]) aretesPartielles.push_back((getAretes())[j]);
+    int x = 100, y = 400;
+    for(unsigned int i = 0; i < vecIndicesSolutionsNonDominees.size(); ++i) {
+        std::vector<bool> solution = *(vecSolutionsCouvrantes[vecIndicesSolutionsNonDominees[i]]);
+        dessiner(svgout, solution, x, y, 0, 0.5);
+        std::string poids = "(";
+        for(unsigned int j = 0; j <  (resultatGraphe(solution)).size(); ++j) {
+            std::stringstream number;
+            number << (int)(resultatGraphe(solution))[j];
+            poids.append(number.str());
+            if(j != (resultatGraphe(solution)).size()-1)    poids.append(" ; ");
+            else                                            poids.append(")");
+            svgout.addText(x+96, y+220, poids);
         }
-        Graphe graphePartiel{ getSommets(), aretesPartielles};
-        graphePartiel.dessiner(svgout, x , y);
-        if ((i+1)%6 == 0)   { y+=450; x = 0; }
-        else                { x+=450; }
-    }*/
+        if ((i+1)%3 == 0)   { y+=250; x = 100; }
+        else                { x+=300; }
+    }
 
     /// On désalloue la mémoire (on ne désalloue pas vecSolutionsCouvrantes car il est inclu dans vecSolutionTaille)
     for(auto ptr : vecSolutionsTaille) {
@@ -380,6 +324,58 @@ void Graphe::affichagePareto() {
     }
     for(auto ptr : vecPoidsSolutions) {
         delete ptr;
+    }
+}
+
+void Graphe::dessiner(Svgfile& svgout, int x, int y, bool toggleText, float coeffTaille) {
+    std::vector<bool> vecBool(m_aretes.size(), 1);
+    dessiner(svgout, vecBool, x, y, toggleText, coeffTaille);
+}
+
+void Graphe::dessiner(Svgfile& svgout, std::vector<bool> vecBool, int x, int y, bool toggleText, float coeffTaille) {
+    int s1, s2, x1, y1, x2, y2;
+    /// DESSIN DES ARETES
+    for(unsigned int i = 0; i < m_aretes.size(); ++i) {
+        if (vecBool[i]) {
+            /// On prend les infos
+            s1 = m_aretes[i]->getS1();
+            s2 = m_aretes[i]->getS2();
+            x1 = m_sommets[s1]->getX()*coeffTaille+x;
+            y1 = m_sommets[s1]->getY()*coeffTaille+y;
+            x2 = m_sommets[s2]->getX()*coeffTaille+x;
+            y2 = m_sommets[s2]->getY()*coeffTaille+y;
+
+            /// On dessine une ligne
+            svgout.addLine(x1, y1, x2, y2);
+            int dy = y2-y1;
+
+            /// Affichage du poids
+            if(toggleText) {
+                std::string poids = "(";
+                std::vector<float> vecPoids = m_aretes[i]->getPoids();
+                for(unsigned int j = 0; j < vecPoids.size(); ++j) {
+                    std::stringstream number;
+                    number << std::fixed << std::setprecision(2) << vecPoids[j];
+                    poids.append(number.str());
+                    if(j != vecPoids.size()-1)    poids.append(" ; ");
+                    else                          poids.append(")");
+                }
+
+                /// Permet de savoir où sur l'écran on affiche le texte
+                if((dy > 5) || (dy < -5)) {
+                    svgout.addText(((x1 + x2)/2)+5, ((y1+y2)/2), poids);
+                } else {
+                    svgout.addText(((x1 + x2)/2)-50, ((y1+y2)/2)-10, poids);
+                }
+            }
+        }
+    }
+
+    /// DESSIN DES SOMMETS
+    for(const auto& it : m_sommets) {
+        x1 = it->getX()*coeffTaille+x;
+        y1 = it->getY()*coeffTaille+y;
+        svgout.addDisk(x1, y1, coeffTaille*7);
     }
 }
 

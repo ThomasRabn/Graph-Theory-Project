@@ -20,7 +20,8 @@ class Graphe
     std::vector<Arete*>  getAretes()  const { return m_aretes; }
 
     /// Affichage
-    void dessiner(Svgfile& svgout, int x = 0, int y = 0);
+    void dessiner(Svgfile& svgout, int x = 0, int y = 0, bool toggleText = 0, float coeffTaille = 1);
+    void dessiner(Svgfile& svgout, std::vector<bool> vecBool, int x = 0, int y = 0, bool toggleText = 0, float coeffTaille = 1);
 
     ~Graphe();
 
