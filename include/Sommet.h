@@ -6,10 +6,13 @@
 
 class Sommet
 {
+  private:
+    int m_index, m_x, m_y;  /// L'index du Sommet pour son r�f�rencement et les coordonn�es du Sommet en X/Y
+    std::vector<int> m_aretesSommet; /// Vecteur d'aretes adjacentes
+
   public:
     Sommet(int index, int x, int y);
-
-    void setIndex(int index) { m_index = index; }
+    ~Sommet();
 
     /// GETTERS
     int getIndex() const { return m_index; }
@@ -21,17 +24,13 @@ class Sommet
         this->m_y = y;
     }
 
-    /// Permet d'ajouter une arete dans le vecteur d'arete du sommet
-    void addArete(int arete);
+    /// SETTERS
+    void setIndex(int index) { m_index = index; }
+    void addArete(int arete); // Permet d'ajouter une arete dans le vecteur d'arete du sommet
 
-    /// Permet d'afficher en console les aretes adjacentes � un sommet
+    /// Permet d'afficher en console les aretes adjacentes a un sommet
     void afficherAretes()const;
 
-    ~Sommet() = default;
-
-  private:
-    int m_index, m_x, m_y;  /// L'index du Sommet pour son r�f�rencement et les coordonn�es du Sommet en X/Y
-    std::vector<int> m_aretesSommet; /// Vecteur d'aretes adjacentes
 };
 
 #endif // SOMMET_H
