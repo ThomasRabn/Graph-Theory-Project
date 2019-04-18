@@ -37,11 +37,16 @@ class Graphe
     std::vector<std::vector<bool>*> ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec);
     void affichagePareto();
 
+    /// Fonction a passer dans sort pour trier un vecteur de booléens correspondants aux aretes en fonction du poids [0]
+    bool operator() (const std::vector<bool>* &courant, const std::vector<bool>* &suivant) {
+        return resultatGraphe(*(courant))[0] < resultatGraphe(*(suivant))[0];
+    }
+
   protected:
 
   private:
       std::vector<Sommet*> m_sommets; /// L'ensemble des Sommets qui composent le graphe
-      std::vector<Arete*> m_aretes;   /// L'ensemble des Ar�tes qui composent le graphe
+      std::vector<Arete*> m_aretes;   /// L'ensemble des Aretes qui composent le graphe
 };
 
 #endif // GRAPHE_H

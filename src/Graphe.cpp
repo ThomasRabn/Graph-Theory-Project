@@ -223,25 +223,24 @@ std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
         }
         return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
     } else{
-
         std::vector<float> resultatPoids;
-        return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
+        return resultatPoids; /// on renvoie un tableau de poids vide
     }
 }
 
 std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec) {
-    std::vector<std::vector<bool>*> arbresCouvrants; // Vecteur stockant tous les pointeurs vers vecteur de booleens permettant de savoir quelles aretes on ajoute
+    std::vector<std::vector<bool>*> arbresCouvrants; /// Vecteur stockant tous les pointeurs vers vecteur de booleens permettant de savoir quelles aretes on ajoute
     std::vector<int> allRight(m_sommets.size(), 0);
-    int indiceVec1 = 0; // int permettant d'acceder a une case specifique du tableau pour les sommets
+    int indiceVec1 = 0; /// int permettant d'acceder a une case specifique du tableau pour les sommets
     int indiceVec2 = 0;
-    for(unsigned int i = 0; i < vec.size(); ++i) { // Pour chaque configuration
-        std::vector<int> vecSommets; // On crée un tableau ne contenant aucun sommet
+    for(unsigned int i = 0; i < vec.size(); ++i) { /// Pour chaque configuration
+        std::vector<int> vecSommets; /// On crée un tableau ne contenant aucun sommet
         for(unsigned int j = 0; j < m_sommets.size(); ++j) {
             vecSommets.push_back(j);
         }
 
-        for (unsigned int j = 0; j < (*(vec[i])).size(); ++j) { // Pour chaque arete
-            if ((*(vec[i]))[j]) { // Si l'arete existe on ajoute les sommets qui sont reliés
+        for (unsigned int j = 0; j < (*(vec[i])).size(); ++j) { /// Pour chaque arete
+            if ((*(vec[i]))[j]) { /// Si l'arete existe on ajoute les sommets qui sont reliés
                 indiceVec1 = getAretes()[j]->getS1();
                 indiceVec2 = getAretes()[j]->getS2();
                 if (vecSommets[indiceVec1]<vecSommets[indiceVec2]) {
@@ -267,16 +266,64 @@ std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std:
 }
 
 void Graphe::affichagePareto() {
-    int x = 0, y = 0;
+    std::vector<std::vector<float>*> vecPoidsSolutions;
     std::vector<std::vector<bool>*> vecSolutionsTaille = ensembleGraphesPartiels();
     std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille);
 
     std::cout << "Nombre de graphes contenant le bon nombre d'aretes : " << vecSolutionsTaille.size() << std::endl;
     std::cout << "Nombre d'arbres couvrants : " << vecSolutionsCouvrantes.size() << std::endl;
 
-    Svgfile svgout("output.svg", 5000, 1000000);
+    /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
+    int compteur = 0;
+    for(auto it : vecSolutionsCouvrantes) {
+        std::vector<float>* poidsSolution =  new std::vector<float>;
+        *poidsSolution = resultatGraphe(*it);
+        (*poidsSolution).push_back(compteur); /// On place en (*poidsSolution)[size-1] l'indice ou est stocke le graphe dans vecSolutionCouvrante
+        vecPoidsSolutions.push_back(poidsSolution);
+        ++compteur;
+    }
+
+    /// On tri le vecteur de poids pour mettre en premier ceux avec le poids[0] le plus petit
+    std::sort(vecPoidsSolutions.begin(), vecPoidsSolutions.end(), [](const auto& cour, const auto& suiv) {
+        if ((*cour)[0] != (*suiv)[0]) {
+            return (*cour)[0] < (*suiv)[0];
+        } else {
+            return (*cour)[1] < (*suiv)[1];
+        }
+    });
+
+    /// Rempli un vecteur de int par les indices des solutions non dominees (l'indice dans vecSolutionsCouvrantes)
+    std::vector<int> vecIndicesSolutionsNonDominees;
+    int xSaved = (*vecPoidsSolutions[0])[0];
+    int ySaved = (*vecPoidsSolutions[0])[1];
+    vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[0]).back());
+    for(unsigned int i = 1; i < vecPoidsSolutions.size(); ++i) {
+        if ((*vecPoidsSolutions[i])[0] != xSaved) {
+            if ((*vecPoidsSolutions[i])[1] < ySaved) {
+                vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[i]).back());
+                xSaved = (*vecPoidsSolutions[i])[0];
+                ySaved = (*vecPoidsSolutions[i])[1];
+            }
+        }
+    }
+
+    /// AFFICHE EN CONSOLE DES INFOS POUR DEBOGAGE
+    std::cout << vecIndicesSolutionsNonDominees.size() << std::endl;
+    for(auto it : vecIndicesSolutionsNonDominees) {
+        std::cout << "(" << (resultatGraphe(*(vecSolutionsCouvrantes[it])))[0] << ";" << (resultatGraphe(*(vecSolutionsCouvrantes[it])))[1] << ")" << std::endl;
+    }
+
+
+    /// AFFICHE EN CONSOLE LES POIDS TRIES
+    /*for(auto& it : vecPoidsSolutions) {
+        std::cout << "(" << (*it)[0] << ";" << (*it)[1] << ")" <<std::endl;
+    }*/
+
+    /// Affiche tous les graphes solutions sur un fichier SVG
+    /*Svgfile svgout("output.svg", 5000, 1000000);
+    int x = 0, y = 0;
     std::vector<Arete*> aretesPartielles;
-    for(unsigned int i = 0; i < 5; ++i) {
+    for(unsigned int i = 0; i < vec.size(); ++i) {
         aretesPartielles.clear();
         for (unsigned int j = 0; j < (*(vecSolutionsCouvrantes[i])).size(); ++j) {
             if ((*(vecSolutionsCouvrantes[i]))[j]) aretesPartielles.push_back((getAretes())[j]);
@@ -285,12 +332,18 @@ void Graphe::affichagePareto() {
         graphePartiel.dessiner(svgout, x , y);
         if ((i+1)%6 == 0)   { y+=450; x = 0; }
         else                { x+=450; }
-    }
+    }*/
 
     /// On désalloue la mémoire (on ne désalloue pas vecSolutionsCouvrantes car il est inclu dans vecSolutionTaille)
-    for(auto& ptr : vecSolutionsTaille) {
+    for(auto ptr : vecSolutionsTaille) {
         delete ptr;
     }
+    for(auto ptr : vecPoidsSolutions) {
+        delete ptr;
+    }
+    /*for(auto ptr : vecGraphesPartiels) {
+        delete ptr;
+    }*/
 }
 
 Graphe::~Graphe()
