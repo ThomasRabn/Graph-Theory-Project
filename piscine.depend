@@ -1,45 +1,33 @@
 # depslib dependency file v1.0
-1555443099 source:c:\users\peter\desktop\projetpiscine\main.cpp
-	<iostream>
+1555679672 source:c:\users\peter\desktop\projetpiscine\main.cpp
 	"svgfile.h"
 	"Graphe.h"
-	"Graphe.h"
-	"Sommet.h"
+
+1555679632 source:c:\users\peter\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
 
-1555428115 source:c:\users\peter\desktop\projetpiscine\src\arete.cpp
-	"Arete.h"
-
-1555428115 c:\users\peter\desktop\projetpiscine\include\arete.h
-	<vector>
+1555679632 c:\users\peter\desktop\projetpiscine\include\arete.h
 	"Sommet.h"
 
-1555428115 c:\users\peter\desktop\projetpiscine\include\sommet.h
+1555679632 c:\users\peter\desktop\projetpiscine\include\sommet.h
 	<vector>
 	<iostream>
 
-1555443357 source:c:\users\peter\desktop\projetpiscine\src\graphe.cpp
+1555685828 source:c:\users\peter\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
-	<fstream>
-	<iostream>
-	<queue>
-	<stack>
-	<unordered_map>
-	<map>
-	<utility>
-	<unordered_set>
-	<algorithm>
 
-1555428115 c:\users\peter\desktop\projetpiscine\include\graphe.h
-	<iostream>
+1555687417 c:\users\peter\desktop\projetpiscine\include\graphe.h
 	<unordered_map>
 	<iomanip>
+	<queue>
 	<sstream>
+	<algorithm>
+	<limits>
 	"Sommet.h"
 	"Arete.h"
 	"svgfile.h"
 
-1555428115 source:c:\users\peter\desktop\projetpiscine\src\sommet.cpp
+1555679632 source:c:\users\peter\desktop\projetpiscine\src\sommet.cpp
 	"Sommet.h"
 
 1555340487 source:c:\users\peter\desktop\projetpiscine\src\svg.cpp
@@ -133,12 +121,12 @@
 1555668672 source:c:\users\thoma\desktop\projetpiscine\src\sommet.cpp
 	"Sommet.h"
 
-1555428115 c:\users\peter\desktop\projetpiscine\include\svgfile.h
+1555679632 c:\users\peter\desktop\projetpiscine\include\svgfile.h
 	<string>
 	<fstream>
 	<set>
 
-1555428115 source:c:\users\peter\desktop\projetpiscine\src\svgfile.cpp
+1555679632 source:c:\users\peter\desktop\projetpiscine\src\svgfile.cpp
 	<iostream>
 	<sstream>
 

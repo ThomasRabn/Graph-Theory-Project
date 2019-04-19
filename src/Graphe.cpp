@@ -371,6 +371,18 @@ std::unordered_map<int, int> Graphe::parcoursDijkstra(unsigned int poids, Sommet
     /*************************
     *************************/
 
+std::vector<float> Graphe::resultatGraphe(std::vector<std::vector<std::vector<float>>> matriceBruteForce) {
+    std::vector<float> poidsRetour(matriceBruteForce.size(), 0);
+    for (unsigned int i = 0 ; i < matriceBruteForce.size() ; ++i){
+        for (unsigned int j = 0 ; j < matriceBruteForce[i].size() ; ++j){
+            for (unsigned int k = j ; k < matriceBruteForce[i][j].size() ; ++k){
+                poidsRetour[i] += matriceBruteForce[i][j][k];
+            }
+        }
+    }
+    return poidsRetour;
+}
+
 std::vector<float> Graphe::resultatGraphe() {
     std::vector<bool> vecBool (m_aretes.size(), 1);
     return resultatGraphe(vecBool);
@@ -391,6 +403,8 @@ std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
         return resultatPoids; /// on renvoie un tableau de poids vide
     }
 }
+
+
 
 /// Retourne un vecteur de bool contenant tous le sous-graphes de Ordre-1 aretes. vec[i] = 1 -> arete n°i ajoutee.
 std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {

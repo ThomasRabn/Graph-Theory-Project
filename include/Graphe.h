@@ -31,6 +31,7 @@ class Graphe
     void dessiner(Svgfile& svgout, std::vector<bool> vecBool, int x = 0, int y = 0, bool toggleText = 0, float coeffTaille = 1);
 
     /// Algorithmes
+    std::vector<float> resultatGraphe(std::vector<std::vector<std::vector<float>>> matriceBruteForce); /// ensemble des résultats des poids pour la partie 3
     std::vector<float> resultatGraphe(); /// nous retourne un tableau de float qui correspond au résultat du grapheen fonction de chacun des poids possibles
     std::vector<float> resultatGraphe(std::vector<bool> vecBool); /// Retourne comme la fonction non overload mais permet de prendre en compte un tableau de bool (1 = arete prise en compte; 0 = pas prise en compte)
 
