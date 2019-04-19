@@ -9,9 +9,9 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     std::ifstream fichier{nomFichier};
     std::ifstream fichier2{nomFichier2};
     if (!fichier) /// Si on a un probleme on lance une erreur
-        throw std::runtime_error("Erreur d'ouverture du fichier " + nomFichier + ", vérifiez le nom et le fichier");
+        throw std::runtime_error("Erreur d'ouverture du fichier " + nomFichier + ", verifiez le nom et le fichier");
     if (!fichier2) /// Si on a un probleme on lance une erreur
-        throw std::runtime_error("Erreur d'ouverture du fichier " + nomFichier2 + ", vérifiez le nom et le fichier");
+        throw std::runtime_error("Erreur d'ouverture du fichier " + nomFichier2 + ", verifiez le nom et le fichier");
     int ordre;
     fichier >> ordre;  /// On met la valeur présente dans le fichier dans ordre
     if (fichier.fail())
@@ -21,7 +21,7 @@ Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     for(int i = 0; i < ordre; ++i){
         fichier >> id;  if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'id du sommet " + i);
         fichier >> x;   if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'abscisse du sommet " + i);
-        fichier >> y;   if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'ordonnée du sommet " + i);
+        fichier >> y;   if(fichier.fail()) throw std::runtime_error("Probleme de lecture de l'ordonnee du sommet " + i);
         m_sommets.push_back(new Sommet{id,x,y});
     }
 
@@ -567,7 +567,7 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
             svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
             coeffRayon = 1;
         } else {
-            coeffRayon+=.02;
+            if(coeffRayon < 6.6) coeffRayon+=.02;
         }
     }
     for(auto it : vecIndicesSolutionsNonDominees) {

@@ -34,9 +34,12 @@
 	<iostream>
 	<sstream>
 
-1555705469 source:c:\users\thomas\desktop\projetpiscine\main.cpp
+1555719020 source:c:\users\thomas\desktop\projetpiscine\main.cpp
 	"svgfile.h"
 	"Graphe.h"
+	<windows.h>
+	<conio.h>
+	<cstdlib>
 
 1555455912 source:c:\users\thomas\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
@@ -48,7 +51,7 @@
 	<vector>
 	<iostream>
 
-1555700930 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
+1555713259 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
 
 1555699032 c:\users\thomas\desktop\projetpiscine\include\graphe.h
