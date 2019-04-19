@@ -244,11 +244,12 @@ void Graphe::affichagePareto() {
 
     /// On tri le vecteur de poids pour mettre en premier ceux avec le poids[0] le plus petit (utilisation d'une fonction lambda)
     std::sort(vecPoidsSolutions.begin(), vecPoidsSolutions.end(), [](const auto& cour, const auto& suiv) {
-        if ((*cour)[0] != (*suiv)[0]) {
-            return (*cour)[0] < (*suiv)[0];
-        } else {
-            return (*cour)[1] < (*suiv)[1];
+        for(unsigned int i = 0; i < (*cour).size()-1; ++i) {
+            if ((*cour)[i] != (*suiv)[i]) {
+                return (*cour)[i] < (*suiv)[i];
+            }
         }
+        return false;
     });
 
     /// Rempli un vecteur de int par les indices des solutions non dominees (l'indice dans vecSolutionsCouvrantes)
