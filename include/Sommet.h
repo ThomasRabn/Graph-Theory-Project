@@ -23,6 +23,7 @@ class Sommet
         this->m_x = x;
         this->m_y = y;
     }
+    std::vector<int> getAretesSommet() const { return m_aretesSommet; }
 
     /// SETTERS
     void setIndex(int index) { m_index = index; }

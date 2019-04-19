@@ -38,6 +38,20 @@ class Graphe
     std::vector<std::vector<bool>*> ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec);
 
     void affichagePareto();
+
+    /*************************
+    *************************/
+
+    //void trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
+    std::vector <Arete*> trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
+
+    int autreSommet(Arete* a, Sommet* s);
+    std::unordered_map<int, int> parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart);
+
+    std::vector < std::vector < std::pair<int, int> > > dijkstra(unsigned int indexOfPoids, Sommet* depart);
+
+    /*************************
+    *************************/
 };
 
 #endif // GRAPHE_H
