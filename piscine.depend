@@ -34,28 +34,30 @@
 	<iostream>
 	<sstream>
 
-1555632365 source:c:\users\thomas\desktop\projetpiscine\main.cpp
+1555695153 source:c:\users\thomas\desktop\projetpiscine\main.cpp
 	"svgfile.h"
 	"Graphe.h"
 
 1555455912 source:c:\users\thomas\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
 
-1555620885 c:\users\thomas\desktop\projetpiscine\include\arete.h
+1555632841 c:\users\thomas\desktop\projetpiscine\include\arete.h
 	"Sommet.h"
 
-1555455912 c:\users\thomas\desktop\projetpiscine\include\sommet.h
+1555683352 c:\users\thomas\desktop\projetpiscine\include\sommet.h
 	<vector>
 	<iostream>
 
-1555632297 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
+1555695120 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
 
-1555629590 c:\users\thomas\desktop\projetpiscine\include\graphe.h
+1555694166 c:\users\thomas\desktop\projetpiscine\include\graphe.h
 	<unordered_map>
 	<iomanip>
+	<queue>
 	<sstream>
 	<algorithm>
+	<limits>
 	"Sommet.h"
 	"Arete.h"
 	"svgfile.h"

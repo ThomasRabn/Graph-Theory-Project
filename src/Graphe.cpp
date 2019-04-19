@@ -407,16 +407,17 @@ std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
 
 
 /// Retourne un vecteur de bool contenant tous le sous-graphes de Ordre-1 aretes. vec[i] = 1 -> arete n°i ajoutee.
-std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
+std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels(bool toggleAbove) {
     std::vector<std::vector<bool>*> graphesPartiels;
     std::vector<bool> etats (m_aretes.size(), 0), allTrue(m_aretes.size(), 1);
-    unsigned int nbrAretes = 0; // Suit le nombre d'aretes presentes dans le graphe partiel créé
+    unsigned int nbrAretes = 0; /// Suit le nombre d'aretes presentes dans le graphe partiel créé
     bool run = 1;
 
     while(run) {
-        if (nbrAretes == m_sommets.size()-1)    graphesPartiels.push_back(new std::vector<bool>{etats});
+        if (nbrAretes == m_sommets.size()-1)                        graphesPartiels.push_back(new std::vector<bool>{etats});
+        else if(nbrAretes > m_sommets.size()-1 && toggleAbove)      graphesPartiels.push_back(new std::vector<bool>{etats});
 
-        if (etats == allTrue)   run = 0; // Arrete la boucle si on a fait tous les tests
+        if (etats == allTrue)   run = 0; /// Arrete la boucle si on a fait tous les tests
         else{ /// Augmente de 1 la valeur binaire enregistrée dans le tableau de booléens (Poids le plus lourd a la fin)
             for(unsigned int i = 0; i < etats.size(); ++i) {
                 if(etats[i])    { etats[i] = 0; nbrAretes--; }
@@ -465,21 +466,29 @@ std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std:
     return arbresCouvrants;
 }
 
-void Graphe::affichagePareto() {
+void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
     std::vector<std::vector<float>*> vecPoidsSolutions;
-    std::vector<std::vector<bool>*> vecSolutionsTaille = ensembleGraphesPartiels();
-    std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille);
+    std::vector<std::vector<bool>*> vecSolutionsTaille;
+    if(toggleDijkstra)  vecSolutionsTaille = ensembleGraphesPartiels(true); /// Retourne tous les graphes partiels d'au moins ordre-1 aretes
+    else                vecSolutionsTaille = ensembleGraphesPartiels(false);/// Retourne tous les graphes partiels de ordre-1 aretes
+    std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille); /// Retourne tous les arbres couvrant faisant partie de vecSolutionsTaille
 
     /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
-    int compteur = 0;
-    for(auto it : vecSolutionsCouvrantes) {
-        std::vector<float>* poidsSolution =  new std::vector<float>;
-        *poidsSolution = resultatGraphe(*it);
-        (*poidsSolution).push_back(compteur); /// On place en (*poidsSolution)[size-1] l'indice ou est stocke le graphe dans vecSolutionCouvrante
-        vecPoidsSolutions.push_back(poidsSolution);
-        ++compteur;
+    if(toggleDijkstra) {
+        for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
+            std::vector<float>* poidsSolution =  new std::vector<float>;
+            *poidsSolution = resultatGraphe(*(vecSolutionsCouvrantes[i]), indicePoidsDijkstra);
+            (*poidsSolution).push_back(i);
+            vecPoidsSolutions.push_back(poidsSolution);
+        }
+    } else {
+        for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
+            std::vector<float>* poidsSolution =  new std::vector<float>;
+            *poidsSolution = resultatGraphe(*(vecSolutionsCouvrantes[i]));
+            (*poidsSolution).push_back(i);
+            vecPoidsSolutions.push_back(poidsSolution);
+        }
     }
-
     /// On tri le vecteur de poids pour mettre en premier ceux avec le poids[0] le plus petit (utilisation d'une fonction lambda)
     std::sort(vecPoidsSolutions.begin(), vecPoidsSolutions.end(), [](const auto& cour, const auto& suiv) {
         for(unsigned int i = 0; i < (*cour).size()-1; ++i) {
@@ -490,26 +499,44 @@ void Graphe::affichagePareto() {
         return false;
     });
 
-    /// Rempli un vecteur de int par les indices des solutions non dominees (l'indice dans vecSolutionsCouvrantes)
+    /// Rempli un vecteur de int par les indices des solutions non dominees (l'indice dans vecSolutionsCouvrantes);
+    ///maxY, min Y, minX et maxX permettent de savoir quelles sont les extremums a placer sur le tableau
+    int maxY = (*vecPoidsSolutions[0])[1];
+    int minX = (*vecPoidsSolutions[0])[0];
+    int minY = maxY;
+    int maxX = minX;
+    std::vector<int> vecIndicesSolutionsNonDominees = giveSolutionsNonDominees(vecPoidsSolutions, maxX, minY);
+
+    /// Affiche tous les graphes solutions sur un fichier SVG
+    dessinerPareto(vecIndicesSolutionsNonDominees, vecSolutionsCouvrantes, vecPoidsSolutions, minX, maxX, minY, maxY);
+
+    /// On désalloue la mémoire (on ne désalloue pas vecSolutionsCouvrantes car il est inclu dans vecSolutionTaille)
+    for(auto ptr : vecSolutionsTaille) {
+        delete ptr;
+    }
+    for(auto ptr : vecPoidsSolutions) {
+        delete ptr;
+    }
+}
+
+std::vector<int> Graphe::giveSolutionsNonDominees(std::vector<std::vector<float>*> vecPoidsSolutions, int& maxX, int& minY) {
     std::vector<int> vecIndicesSolutionsNonDominees;
-    int xSaved = (*vecPoidsSolutions[0])[0];
-    int ySaved = (*vecPoidsSolutions[0])[1];
-    int maxY = ySaved;
-    int minX = xSaved;
     vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[0]).back());
     for(unsigned int i = 1; i < vecPoidsSolutions.size(); ++i) {
-        if ((*vecPoidsSolutions[i])[0] != xSaved) {
-            if ((*vecPoidsSolutions[i])[1] < ySaved) {
+        if ((*vecPoidsSolutions[i])[0] != maxX) {
+            if ((*vecPoidsSolutions[i])[1] < minY) {
                 vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[i]).back());
-                xSaved = (*vecPoidsSolutions[i])[0];
-                ySaved = (*vecPoidsSolutions[i])[1];
+                maxX = (*vecPoidsSolutions[i])[0];
+                minY = (*vecPoidsSolutions[i])[1];
             }
         }
     }
-    int maxX = xSaved;
-    int minY = ySaved;
+    return vecIndicesSolutionsNonDominees;
+}
 
-    /// Affiche tous les graphes solutions sur un fichier SVG
+void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std::vector<std::vector<bool>*> vecSolutionsCouvrantes,
+                            std::vector<std::vector<float>*> vecPoidsSolutions, int minX, int maxX, int minY, int maxY)
+{
     Svgfile svgout("output.svg", 5000, 20000);
     dessiner(svgout, 275, -50);
     const int debutX = 1100;
@@ -519,40 +546,47 @@ void Graphe::affichagePareto() {
     svgout.addLine(debutX, hauteur+debutY-30, debutX+largeur, hauteur+debutY-30);
     svgout.addLine(debutX+30, debutY, debutX+30, debutY+hauteur);
 
-    int rayonFaux, rayonVrai;
-    float coeffBas, coeffHaut; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
+    int rayonFaux = 2, rayonVrai = 5;
+    float coeffBasX, coeffHautX, coeffBasY, coeffHautY; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
     if(vecSolutionsCouvrantes.size() < 100) {
-        rayonFaux = 2; rayonVrai = 5; coeffBas = 0.25; coeffHaut = 0.5;
+        coeffBasX = 0.25; coeffHautX = 0.5; coeffBasY = 0.25; coeffHautY = 0.5;
     } else if (vecSolutionsCouvrantes.size() < 1000) {
-        rayonFaux = 2; rayonVrai = 5; coeffBas= 0.1; coeffHaut = 0.7;
+        coeffBasX = 0.1; coeffHautX = 0.5; coeffBasY = 0.1; coeffHautY = 0.7;
     } else{
-        rayonFaux = 2; rayonVrai = 5; coeffBas = 0.1; coeffHaut = 0.7;
+        coeffBasX = 0.1; coeffHautX = 0.5; coeffBasY = 0.1; coeffHautY = 0.6;
     }
 
     float lastX = -1, lastY = -1, coeffRayon = 1;
     for(auto it : vecPoidsSolutions) {
         if ((*it)[0] != lastX || (*it)[1] != lastY) {
-            float posX = mapping((*it)[0], minX, maxX, debutX+coeffBas*largeur, debutX+largeur-coeffHaut*largeur);
-            float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBas*hauteur, debutY+hauteur-(1-coeffHaut)*hauteur);
+            float posX = mapping((*it)[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
+            float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
             lastX = (*it)[0];
             lastY = (*it)[1];
             svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
             coeffRayon = 1;
         } else {
-            coeffRayon+=0.01;
+            coeffRayon+=.02;
         }
     }
     for(auto it : vecIndicesSolutionsNonDominees) {
         std::vector<float> vecPoidsNonDominees = resultatGraphe(*(vecSolutionsCouvrantes[it]));
-        float posX = mapping(vecPoidsNonDominees[0], minX, maxX, debutX+coeffBas*largeur, debutX+largeur-coeffHaut*largeur);
-        float posY = mapping(vecPoidsNonDominees[1], minY, maxY, debutY+hauteur-coeffBas*hauteur, debutY+hauteur-(1-coeffHaut)*hauteur);
-        svgout.addDisk(posX, posY, rayonVrai, 100, svgout.makeRGB(0,255,0));
+        float posX = mapping(vecPoidsNonDominees[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
+        float posY = mapping(vecPoidsNonDominees[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
+        svgout.addDisk(posX, posY, rayonVrai, 100, svgout.makeRGB(0,200,0));
     }
 
     int x = 100, y = 400;
+    maxX = -1; minX = std::numeric_limits<int>::max();
+    minY = minX;
     for(unsigned int i = 0; i < vecIndicesSolutionsNonDominees.size(); ++i) {
         std::vector<bool> solution = *(vecSolutionsCouvrantes[vecIndicesSolutionsNonDominees[i]]);
         dessiner(svgout, solution, x, y, 0, 0.5);
+        for(unsigned int indSommet = 0; indSommet < m_sommets.size(); ++indSommet) {
+            if(m_sommets[indSommet]->getX() < minX)     minX = m_sommets[indSommet]->getX();
+            if(m_sommets[indSommet]->getX() > maxX)     maxX = m_sommets[indSommet]->getX();
+            if(m_sommets[indSommet]->getY() < minY)     minY = m_sommets[indSommet]->getY();
+        }
         std::string poids = "(";
         for(unsigned int j = 0; j <  (resultatGraphe(solution)).size(); ++j) {
             std::stringstream number;
@@ -560,18 +594,10 @@ void Graphe::affichagePareto() {
             poids.append(number.str());
             if(j != (resultatGraphe(solution)).size()-1)    poids.append(" ; ");
             else                                            poids.append(")");
-            svgout.addText(x+96, y+220, poids);
+            svgout.addText(x+(minX+maxX)/4-25, y+minY/2-20, poids);
         }
         if ((i+1)%3 == 0)   { y+=250; x = 100; }
         else                { x+=300; }
-    }
-
-    /// On désalloue la mémoire (on ne désalloue pas vecSolutionsCouvrantes car il est inclu dans vecSolutionTaille)
-    for(auto ptr : vecSolutionsTaille) {
-        delete ptr;
-    }
-    for(auto ptr : vecPoidsSolutions) {
-        delete ptr;
     }
 }
 

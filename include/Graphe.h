@@ -37,10 +37,13 @@ class Graphe
 
     Graphe parcourKruskal(unsigned int indexOfPoids);
 
-    std::vector<std::vector<bool>*> ensembleGraphesPartiels();
-    std::vector<std::vector<bool>*> ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec);
-
-    void affichagePareto();
+    /// Fonction pour Pareto
+    std::vector<std::vector<bool>*> ensembleGraphesPartiels(bool toggleAbove = 0); /// Retourne un vecteur de vecteur de booleens correspondants à tous les graphes partiels de ordre-1 arete
+    std::vector<std::vector<bool>*> ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec); /// Retourne un vecteur de bool contenant les configurations couvrantes
+    void dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std::vector<std::vector<bool>*> vecSolutionsCouvrantes, /// Dessine sur un fichier svg ce qu'il faut pour Pareto
+                        std::vector<std::vector<float>*> vecPoidsSolutions, int minX, int maxX, int minY, int maxY);
+    std::vector<int> giveSolutionsNonDominees(std::vector<std::vector<float>*> vecPoidsSolutions, int& maxX, int& minY); /// Retourne un vecteur de int contenant les indices des solutions optimums (qui sont stockees à la fin de vecPoidsSolutions)
+    void affichagePareto(bool toggleDijkstra = 0, int indicePoidsDijkstra = 1);
 
     /*************************
     *************************/
