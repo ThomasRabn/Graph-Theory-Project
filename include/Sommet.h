@@ -1,8 +1,17 @@
 #ifndef SOMMET_H
 #define SOMMET_H
 
-#include <vector>
+//#include <vector>
 #include <iostream>
+
+    /*************************
+    *************************/
+
+#include "Arete.h"
+#include <algorithm>
+
+    /*************************
+    *************************/
 
 class Sommet
 {
@@ -26,6 +35,14 @@ class Sommet
 
     /// Permet d'afficher en console les aretes adjacentes � un sommet
     void afficherAretes()const;
+
+    /*************************
+    *************************/
+
+    std::vector<int> getAretesSommet() const { return m_aretesSommet; }
+
+    /*************************
+    *************************/
 
     ~Sommet() = default;
 

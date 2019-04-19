@@ -2,7 +2,7 @@
 #define ARETE_H
 
 #include <vector>
-#include "Sommet.h"
+//#include "Sommet.h"
 
 class Arete
 {

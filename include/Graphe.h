@@ -1,13 +1,13 @@
 #ifndef GRAPHE_H
 #define GRAPHE_H
 
-#include <iostream>
-#include <vector>
+//#include <iostream>
+//#include <vector>
 #include <unordered_map>
 #include <iomanip> // setprecision
 #include <sstream> // stringstream
 #include "Sommet.h"
-#include "Arete.h"
+//#include "Arete.h"
 #include "svgfile.h"
 
 class Graphe
@@ -29,6 +29,19 @@ class Graphe
     Graphe parcourKruskal(unsigned int indexOfPoids);
     std::vector<Graphe*> ensembleGraphesPartiels();
 
+    /*************************
+    *************************/
+
+    //void trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
+    std::vector <Arete*> trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
+
+    int autreSommet(Arete* a, Sommet* s);
+    std::unordered_map<int, int> parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart);
+
+    std::vector < std::vector < std::pair<int, int> > > dijkstra(unsigned int indexOfPoids, Sommet* depart);
+
+    /*************************
+    *************************/
 
   protected:
 

@@ -160,3 +160,46 @@
 	<iostream>
 	<sstream>
 
+1555661952 source:c:\users\paulb\desktop\projetpiscine\main.cpp
+	"Graphe.h"
+
+1555500908 c:\users\paulb\desktop\projetpiscine\include\svgfile.h
+	<string>
+	<fstream>
+	<set>
+
+1555625594 c:\users\paulb\desktop\projetpiscine\include\graphe.h
+	<unordered_map>
+	<iomanip>
+	<sstream>
+	"Sommet.h"
+	"svgfile.h"
+
+1555544757 c:\users\paulb\desktop\projetpiscine\include\sommet.h
+	<iostream>
+	"Arete.h"
+	<algorithm>
+
+1555524619 c:\users\paulb\desktop\projetpiscine\include\arete.h
+	<vector>
+
+1555500908 source:c:\users\paulb\desktop\projetpiscine\src\arete.cpp
+	"Arete.h"
+
+1555661011 source:c:\users\paulb\desktop\projetpiscine\src\graphe.cpp
+	"Graphe.h"
+	<fstream>
+	<queue>
+	<stack>
+	<map>
+	<utility>
+	<unordered_set>
+	<limits>
+
+1555544757 source:c:\users\paulb\desktop\projetpiscine\src\sommet.cpp
+	"Sommet.h"
+
+1555500908 source:c:\users\paulb\desktop\projetpiscine\src\svgfile.cpp
+	<iostream>
+	<sstream>
+
