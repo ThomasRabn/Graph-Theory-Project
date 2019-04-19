@@ -3,8 +3,10 @@
 
 #include <unordered_map>
 #include <iomanip>
+#include <queue>
 #include <sstream>
 #include <algorithm>
+#include <limits>
 #include "Sommet.h"
 #include "Arete.h"
 #include "svgfile.h"
