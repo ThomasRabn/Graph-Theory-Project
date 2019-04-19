@@ -4,8 +4,8 @@
 int main()
 {
     //int x = 0, y = 0;
-    Graphe myGraphe{"files/broadway.txt", "files/broadway_weights_0.txt"};
+    Graphe myGraphe{"files/manhattan.txt", "files/manhattan_weights_0.txt"};
 
-    myGraphe.affichagePareto();
+    myGraphe.affichagePareto(1);
     return 0;
 }
