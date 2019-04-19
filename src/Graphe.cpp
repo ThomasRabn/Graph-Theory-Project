@@ -207,7 +207,6 @@ std::vector < std::vector < std::vector < float > > > Graphe::dijkstra(unsigned 
         vectorMatrice.push_back(*newGraphe);
         delete (newGraphe);
     }
-
     return vectorMatrice;
 }
 
@@ -298,7 +297,6 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
         pq.pop();
 
         /// vide le vector d'arete du précédent sommet
-        aretesConnectees.clear();
 
         /// on ajoute les aretes du sommet actuel
         for(size_t i=0; i<s->getAretesSommet().size(); ++i)

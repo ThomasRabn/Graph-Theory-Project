@@ -70,23 +70,16 @@ std::vector <std::string> choix()
 
 std::vector<std::vector<bool>*> remplirBool(std::vector<std::vector<bool>*> myBool, int taille)
 {
-    std::cout   << " bool"    << std::endl;
     for (int i = 0; i < 1; ++i)
 	{
-	    std::cout   << " bool"    << taille << std::endl;
-		std::vector<bool>* v;
+		std::vector<bool>* v = new std::vector<bool>;
 		for (int j = 0; j < taille; ++j)
-        {
-            std::cout   << " bool"    << j << std::endl;
             (*v).push_back(1);
-        }
 
-        std::cout   << " bool"    << std::endl;
 		myBool.push_back(v);
-		std::cout   << " bool"    << std::endl;
 		delete(v);
 	}
-	std::cout   << " bool"    << std::endl;
+
 	return myBool;
 }
 
