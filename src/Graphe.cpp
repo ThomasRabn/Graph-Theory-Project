@@ -1,7 +1,9 @@
 #include "Graphe.h"
 
-/// FONCTION PERMETTANT DE PASSER D'UN INTERVALLE A UN AUTRE, PRISE SUR LE SITE DE ARDUINO (fonction map())
-float mapping(float x, float in_min, float in_max, float out_min, float out_max)    { return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min; }
+/// FONCTION PERMETTANT DE PASSER D'UN INTERVALLE A UN AUTRE
+float mapping(float value, float minIn, float maxIn, float minOut, float maxOut) {
+    return (value - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
+}
 
 Graphe::Graphe(std::string nomFichier, std::string nomFichier2){
     std::ifstream fichier{nomFichier};
@@ -145,6 +147,27 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     return myGraphe;
 }
 
+std::vector<float> Graphe::resultatGraphe() {
+    std::vector<bool> vecBool (m_aretes.size(), 1);
+    return resultatGraphe(vecBool);
+}
+
+std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
+    if (!(getAretes().empty())) {
+        int nbPoids = getAretes()[0]->getNbPoids(); /// on obtient le nombre de poids que les arètes possèdent
+        std::vector<float> resultatPoids(nbPoids,0);
+        for (int i = 0 ; i<nbPoids ; ++i) {
+            for (unsigned int j = 0; j < getAretes().size(); ++j) {
+                if(vecBool[j])  { resultatPoids[i] += m_aretes[j]->getPoids(i); }
+            }
+        }
+        return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
+    } else{
+        std::vector<float> resultatPoids;
+        return resultatPoids; /// on renvoie un tableau de poids vide
+    }
+}
+
 /// Retourne un vecteur de bool contenant tous le sous-graphes de Ordre-1 aretes. vec[i] = 1 -> arete n°i ajoutee.
 std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
     std::vector<std::vector<bool>*> graphesPartiels;
@@ -165,27 +188,6 @@ std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels() {
     }
 
     return graphesPartiels;
-}
-
-std::vector<float> Graphe::resultatGraphe() {
-    std::vector<bool> vecBool (m_aretes.size(), 1);
-    return resultatGraphe(vecBool);
-}
-
-std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
-    if (!(getAretes().empty())) {
-        int nbPoids = getAretes()[0]->getNbPoids(); /// on obtient le nombre de poids que les arètes possèdent
-        std::vector<float> resultatPoids(nbPoids,0);
-        for (int i = 0 ; i<nbPoids ; ++i) {
-            for (unsigned int j = 0; j < getAretes().size(); ++j) {
-                if(vecBool[j])  { resultatPoids[i] += m_aretes[j]->getPoids(i); }
-            }
-        }
-        return resultatPoids; /// on renvoie un tableau de poids pour connaître le résultat de notre graphe par poids
-    } else{
-        std::vector<float> resultatPoids;
-        return resultatPoids; /// on renvoie un tableau de poids vide
-    }
 }
 
 std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec) {
@@ -278,7 +280,6 @@ void Graphe::affichagePareto() {
     svgout.addLine(debutX, hauteur+debutY-30, debutX+largeur, hauteur+debutY-30);
     svgout.addLine(debutX+30, debutY, debutX+30, debutY+hauteur);
 
-    /// EXPRESSION MATHEMATIQUE TROUVEE SUR LE SITE DE ARDUINO (FONCTION MAP()) : (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
     int rayonFaux, rayonVrai;
     float coeffBas, coeffHaut; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
     if(vecSolutionsCouvrantes.size() < 100) {
@@ -286,13 +287,21 @@ void Graphe::affichagePareto() {
     } else if (vecSolutionsCouvrantes.size() < 1000) {
         rayonFaux = 2; rayonVrai = 5; coeffBas= 0.1; coeffHaut = 0.7;
     } else{
-        rayonFaux = 1; rayonVrai = 5; coeffBas = 0.1; coeffHaut = 0.7;
+        rayonFaux = 2; rayonVrai = 5; coeffBas = 0.1; coeffHaut = 0.7;
     }
 
+    float lastX = -1, lastY = -1, coeffRayon = 1;
     for(auto it : vecPoidsSolutions) {
-        float posX = mapping((*it)[0], minX, maxX, debutX+coeffBas*largeur, debutX+largeur-coeffHaut*largeur);
-        float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBas*hauteur, debutY+hauteur-(1-coeffHaut)*hauteur);
-        svgout.addDisk(posX, posY, rayonFaux, 100, svgout.makeRGB(255,0,0));
+        if ((*it)[0] != lastX || (*it)[1] != lastY) {
+            float posX = mapping((*it)[0], minX, maxX, debutX+coeffBas*largeur, debutX+largeur-coeffHaut*largeur);
+            float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBas*hauteur, debutY+hauteur-(1-coeffHaut)*hauteur);
+            lastX = (*it)[0];
+            lastY = (*it)[1];
+            svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
+            coeffRayon = 1;
+        } else {
+            coeffRayon+=0.01;
+        }
     }
     for(auto it : vecIndicesSolutionsNonDominees) {
         std::vector<float> vecPoidsNonDominees = resultatGraphe(*(vecSolutionsCouvrantes[it]));

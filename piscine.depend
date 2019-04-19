@@ -93,35 +93,29 @@
 	<iostream>
 	<sstream>
 
-1555501781 source:c:\users\thoma\desktop\projetpiscine\main.cpp
-	<iostream>
+1555661646 source:c:\users\thoma\desktop\projetpiscine\main.cpp
 	"svgfile.h"
 	"Graphe.h"
-	"Sommet.h"
-	"Arete.h"
-	<vector>
 
 1555417049 c:\users\thoma\desktop\projetpiscine\include\svgfile.h
 	<string>
 	<fstream>
 	<set>
 
-1555501788 c:\users\thoma\desktop\projetpiscine\include\graphe.h
-	<iostream>
-	<vector>
+1555633071 c:\users\thoma\desktop\projetpiscine\include\graphe.h
 	<unordered_map>
 	<iomanip>
 	<sstream>
+	<algorithm>
 	"Sommet.h"
 	"Arete.h"
 	"svgfile.h"
 
-1555494727 c:\users\thoma\desktop\projetpiscine\include\sommet.h
+1555633071 c:\users\thoma\desktop\projetpiscine\include\sommet.h
 	<vector>
 	<iostream>
 
-1555495598 c:\users\thoma\desktop\projetpiscine\include\arete.h
-	<vector>
+1555633071 c:\users\thoma\desktop\projetpiscine\include\arete.h
 	"Sommet.h"
 
 1555494727 source:c:\users\thoma\desktop\projetpiscine\src\arete.cpp
@@ -131,17 +125,8 @@
 	<iostream>
 	<sstream>
 
-1555502010 source:c:\users\thoma\desktop\projetpiscine\src\graphe.cpp
+1555661551 source:c:\users\thoma\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
-	<fstream>
-	<iostream>
-	<queue>
-	<stack>
-	<unordered_map>
-	<map>
-	<utility>
-	<unordered_set>
-	<algorithm>
 
 1555494727 source:c:\users\thoma\desktop\projetpiscine\src\sommet.cpp
 	"Sommet.h"
