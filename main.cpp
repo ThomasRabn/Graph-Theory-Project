@@ -4,9 +4,9 @@
 int main()
 {
     //int x = 0, y = 0;
-    Graphe myGraphe{"files/manhattan.txt", "files/manhattan_weights_0.txt"};
+    Graphe myGraphe{"files/triville.txt", "files/triville_weights_0.txt"};
 
-    myGraphe.affichagePareto(1);
+    myGraphe.affichagePareto(0);
     return 0;
 }
 /**for (int i = 0 ; i<myGraphe.getAretes()[0]->getNbPoids() ; ++i){

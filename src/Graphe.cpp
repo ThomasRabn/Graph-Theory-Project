@@ -475,12 +475,12 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
 
     /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
     if(toggleDijkstra) {
-        for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
+        /*for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
             std::vector<float>* poidsSolution =  new std::vector<float>;
             *poidsSolution = resultatGraphe(*(vecSolutionsCouvrantes[i]), indicePoidsDijkstra);
             (*poidsSolution).push_back(i);
             vecPoidsSolutions.push_back(poidsSolution);
-        }
+        }*/
     } else {
         for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
             std::vector<float>* poidsSolution =  new std::vector<float>;
@@ -537,14 +537,15 @@ std::vector<int> Graphe::giveSolutionsNonDominees(std::vector<std::vector<float>
 void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std::vector<std::vector<bool>*> vecSolutionsCouvrantes,
                             std::vector<std::vector<float>*> vecPoidsSolutions, int minX, int maxX, int minY, int maxY)
 {
+    /// Creation des variables et ajouts des axes du graphique
     Svgfile svgout("output.svg", 5000, 20000);
     dessiner(svgout, 275, -50);
     const int debutX = 1100;
     const int debutY = 100;
     const int largeur = 800;
     const int hauteur = 800;
-    svgout.addLine(debutX, hauteur+debutY-30, debutX+largeur, hauteur+debutY-30);
-    svgout.addLine(debutX+30, debutY, debutX+30, debutY+hauteur);
+    svgout.addLine(debutX-50, hauteur+debutY, debutX+largeur, hauteur+debutY);
+    svgout.addLine(debutX, debutY, debutX, debutY+hauteur+50);
 
     int rayonFaux = 2, rayonVrai = 5;
     float coeffBasX, coeffHautX, coeffBasY, coeffHautY; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
