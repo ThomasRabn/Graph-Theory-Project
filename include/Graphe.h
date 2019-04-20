@@ -35,6 +35,7 @@ class Graphe
     std::vector<float> resultatGraphe(); /// nous retourne un tableau de float qui correspond au résultat du grapheen fonction de chacun des poids possibles
     std::vector<float> resultatGraphe(std::vector<bool> vecBool); /// Retourne comme la fonction non overload mais permet de prendre en compte un tableau de bool (1 = arete prise en compte; 0 = pas prise en compte)
 
+    /// Kruskal
     Graphe parcourKruskal(unsigned int indexOfPoids);
 
     /// Fonction pour Pareto
@@ -45,20 +46,13 @@ class Graphe
     std::vector<int> giveSolutionsNonDominees(std::vector<std::vector<float>*> vecPoidsSolutions, int& maxX, int& minY); /// Retourne un vecteur de int contenant les indices des solutions optimums (qui sont stockees à la fin de vecPoidsSolutions)
     void affichagePareto(bool toggleDijkstra = 0, int indicePoidsDijkstra = 1);
 
-    /*************************
-    *************************/
-
+    /// fonctions permettant le fonctionnement de Dijkstra
     void trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
-    std::vector <Arete*> trierPoidsAretes2(std::vector <Arete*> aretesConnectees, unsigned int poids);
-
     int autreSommet(Arete* a, Sommet* s);
-    std::vector < std::pair <int, float> > parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart, std::vector<bool>* myBool);
 
-    std::vector < std::vector < std::vector < float > > > dijkstra(unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
-
-    /*************************
-    *************************/
-
+    /// Dijkstra
+    float parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart, std::vector<bool>* myBool);
+    std::vector <float> dijkstra (unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
 
     ///Extension d'optimisation du pire chemin en fonction du temps
     Graphe ajoutPireCheminOptimisable(Graphe grapheEntry, Graphe grapheTotal);

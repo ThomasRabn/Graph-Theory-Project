@@ -15113,6 +15113,7 @@
 <line x1="500" y1="1000" x2="500" y2="1050" stroke="black" />
 <line x1="550" y1="1000" x2="550" y2="1050" stroke="black" />
 <line x1="450" y1="1050" x2="450" y2="1100" stroke="black" />
+<line x1="500" y1="1050" x2="500" y2="1100" stroke="black" />
 <line x1="550" y1="1050" x2="550" y2="1100" stroke="black" />
 <line x1="600" y1="1050" x2="600" y2="1100" stroke="black" />
 <circle cx="450" cy="950" r="3.5" fill="black" fill-opacity="1" />
