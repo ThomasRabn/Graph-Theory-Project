@@ -1,7 +1,7 @@
 #ifndef SOMMET_H
 #define SOMMET_H
 
-//#include <vector>
+#include <vector>
 #include <iostream>
 
     /*************************

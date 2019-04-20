@@ -282,7 +282,7 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
     /// Tous les sommets sont à une distance infinie du sommet de départ (celui ci est à 0)
     for(size_t i=0; i<m_sommets.size(); ++i)
     {
-        if(i == depart->getIndex()) distance.push_back(0);
+        if(i == (unsigned int)depart->getIndex()) distance.push_back(0);
         else distance.push_back(infinity);
     }
 
@@ -347,223 +347,6 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
     return l_pred;
 }
 
-
-    /*************************
-    *************************/
-
-
-/// Retourne un vecteur de Graphes contenant tous le sous-graphes possibles
-std::vector<Graphe*> Graphe::ensembleGraphesPartiels() {
-    std::vector<Graphe*> graphesPartiels;
-    std::vector<bool> etats, allTrue;
-    std::vector<bool> changementEtat; // Une case contient un 1 si l'etat a été changé ce tour, un 0 sinon
-    for(unsigned int i = 0; i < m_aretes.size(); ++i) {
-        etats.push_back(0);
-        allTrue.push_back(1);
-        changementEtat.push_back(0);
-    }
-    std::cout << std::endl;
-
-    /// AFFICHER CHEMINS
-    for(auto s:recupParcours){
-
-        if(s.second!=-1)
-        {
-            std::cout<<s.first<<" <--- ";
-            std::pair<int, int> pred=s;
-            while(pred.second!=depart->getIndex()){
-                pred=*recupParcours.find(pred.second);
-                std::cout<<pred.first<<" <--- ";
-            }
-            std::cout<< depart->getIndex() <<std::endl;
-        }
-    }
-    std::cout << std::endl;
-
-    /// TRANSVASER SOMMET
-    for(auto s:recupParcours)
-    {
-        std::vector < std::pair<int, int> > add;
-
-        if(s.second!=-1)
-        {
-            add.push_back(std::make_pair(s.first, -1));
-
-            std::pair<int, int> pred=s;
-            while(pred.second != depart->getIndex())
-            {
-                pred =*recupParcours.find(pred.second);
-                add.push_back(std::make_pair(pred.first, -1));
-            }
-        }
-        add.push_back(std::make_pair(depart->getIndex(), -1));
-        tab.push_back(add);
-    }
-    std::cout << std::endl;
-
-    /// AJOUT DES ARETES
-    for (unsigned int i = 0; i < tab.size(); i++)
-    {
-        for (unsigned int j = 0; j < tab[i].size(); j++)
-        {
-
-        }
-    }
-
-    /// PRINT TAB
-    for (unsigned int i = 0; i < tab.size(); i++)
-    {
-        for (unsigned int j = 0; j < tab[i].size(); j++)
-            std::cout << "{" << tab[i][j].first << ", " << tab[i][j].second << "}";
-        std::cout << std::endl;
-    }
-
-    return tab;
-}
-
-/// fonction permetant de trier les aretes selon leur poids
-/*
-void Graphe::trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids)
-{
-    std::sort(aretesConnectees.begin(), aretesConnectees.end(), [](Arete* s1, Arete* s2)
-    {
-        return s1->getPoids(0) > s2->getPoids(0);
-    });
-}*/
-/// Cette fonction remplace le std::sort non opérationel
-std::vector <Arete*> Graphe::trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids)
-{
-    std::vector <Arete*> retour;
-    float minimum;
-    int rang;
-
-    while(!aretesConnectees.empty())
-    {
-        minimum = aretesConnectees[0]->getPoids(poids);
-        rang = 0;
-        for(unsigned int i=0; i<aretesConnectees.size(); ++i)
-            if(minimum > aretesConnectees[i]->getPoids(poids))
-            {
-                minimum = aretesConnectees[i]->getPoids(poids);
-                rang = i;
-            }
-        retour.push_back(aretesConnectees[rang]);
-        aretesConnectees.erase(aretesConnectees.begin() + rang);
-    }
-    return retour;
-}
-
-/// fonction permettant de conaître l'autre sommet lié à une arete
-int Graphe::autreSommet(Arete* a, Sommet* s)
-{
-    if(a->getS1() == s->getIndex())
-        return a->getS2();
-    return a->getS1();
-}
-
-/// POIDS est soit le COUT (0), soit la DISTANCE (1)
-std::unordered_map<int, int> Graphe::parcoursDijkstra(unsigned int poids, Sommet* depart)
-{
-    /// la map que l'on retourne avec les ID du sommet et de son prédécesseur
-    std::unordered_map<int, int> l_pred;
-
-    /// On peut alors l'insérer dans la map le sommet de départ
-    l_pred.insert({depart->getIndex(), -1});
-
-    /// la priority_queue sera dans l'ordre croissant, avec (Poids, Sommet)
-    std::priority_queue< std::pair<float, Sommet*>, std::vector < std::pair<float, Sommet*> > , std::greater< std::pair<float, Sommet*> > > pq;
-    //std::priority_queue < std::pair<float, Sommet*> > pq;
-
-    /// vector indiquand si un sommet à déjà était exploré, pour ne pas le réajouter dans la file de priorité
-    std::vector <int> marque;
-    int boolMarque;     /// non(0) - oui(1)
-
-    /// La priority_queue reçoit le sommet sur lequel elle va appliquer Dijkstra et met sa distance à 0
-    pq.push(std::make_pair(0, depart));
-
-    /// définit une variable pour l'infini (~2B pour un int)
-    float infinity = std::numeric_limits<float>::max();
-    /// le vecteur contenant les distances de chaques sommet (toutes à l'infini au départ)
-    std::vector <float> distance;
-
-    /// un sommet tampon
-    Sommet* s;
-    /// vector de tri pour le poids des arêtes
-    std::vector <Arete*> aretesConnectees;
-
-    /// Tous les sommets sont à une distance infinie du sommet de départ (celui ci est à 0)
-    for(size_t i=0; i<m_sommets.size(); ++i)
-    {
-        if(i == 0) distance.push_back(0);
-        else distance.push_back(infinity);
-    }
-
-    /// Execution de Dijkstra (tant qu'il y a au moins un sommet à explorer)
-    while(!pq.empty())
-    {
-        /// le sommet tampon reçoit la valeur du sommet que l'on traite
-        s = pq.top().second;
-        /// le sommet traiter est retiré de la file
-        pq.pop();
-
-        /// vide le vector d'arete du précédent sommet
-        aretesConnectees.clear();
-
-        /// on ajoute les aretes du sommet actuel
-        for(size_t i=0; i<s->getAretesSommet().size(); ++i)
-            aretesConnectees.push_back(m_aretes[s->getAretesSommet()[i]]);
-
-
-
-
-        ///AJOUT if(vectBool[getAreteSommet[i]]
-
-
-
-
-        /// on les trie selon leur poids
-        //trierPoidsAretes(aretesConnectees, poids);
-        aretesConnectees = trierPoidsAretes(aretesConnectees, poids);
-
-        /// Ajoute les sommets à la file de priorité et à la map de retour
-        for(const auto& v : aretesConnectees)
-        {
-            /// on indique leur distance par rapport au sommet initial, si elle est meilleure, on l'ajoute à la map
-            if(distance[s->getIndex()] + v->getPoids(poids) < distance[autreSommet(v, s)])
-            {
-                /// si c'est bien le chemin le plus court, il reçoit cette nouvelle distance
-                distance[autreSommet(v, s)] = distance[s->getIndex()] + v->getPoids(poids);
-
-                /// Si ce sommet n'était pas encore dans la map on l'ajoute
-                if(l_pred.find(autreSommet(v, s)) == l_pred.end()){
-                    l_pred.insert({autreSommet(v, s), s->getIndex()});
-                }
-
-                /// Si le sommet était déjà dans la map, on change son antécédent
-                else
-                {
-                    auto it = l_pred.find(autreSommet(v, s));
-                    it->second = s->getIndex();
-                }
-                /// on ajoute à la file de priorité si il n'est pas déjà marqué
-                boolMarque = 0;
-                for(unsigned int z = 0; z<marque.size(); ++z)
-                    /// si il est déjà marqué, boolMarque devient vrai
-                    if(marque[z] == autreSommet(v,s)) boolMarque = 1;
-
-                if(boolMarque == 0)
-                {
-                    pq.push(std::make_pair(distance[autreSommet(v, s)], m_sommets[autreSommet(v,s)]));
-                    marque.push_back(autreSommet(v,s));
-                }
-            }
-        }
-    }
-
-    return l_pred;
-}
-
-
     /*************************
     *************************/
 
@@ -599,8 +382,6 @@ std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
         return resultatPoids; /// on renvoie un tableau de poids vide
     }
 }
-
-
 
 /// Retourne un vecteur de bool contenant tous le sous-graphes de Ordre-1 aretes. vec[i] = 1 -> arete n°i ajoutee.
 std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels(bool toggleAbove) {
@@ -671,12 +452,17 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
 
     /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
     if(toggleDijkstra) {
-        /*for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
+        for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
             std::vector<float>* poidsSolution =  new std::vector<float>;
-            *poidsSolution = resultatGraphe(*(vecSolutionsCouvrantes[i]), indicePoidsDijkstra);
+            if ((int)i == indicePoidsDijkstra) {
+                std::vector<std::vector<std::vector<float>>> vecDij = dijkstra(indicePoidsDijkstra, vecSolutionsCouvrantes);
+                *poidsSolution = resultatGraphe(vecDij);
+            } else{
+                *poidsSolution = resultatGraphe(*(vecSolutionsCouvrantes[i]));
+            }
             (*poidsSolution).push_back(i);
             vecPoidsSolutions.push_back(poidsSolution);
-        }*/
+        }
     } else {
         for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
             std::vector<float>* poidsSolution =  new std::vector<float>;

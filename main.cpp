@@ -86,9 +86,11 @@ void menu() {
             }
 
             else if(y == 6) {
-                // Pareto dijkstra (demander le poids a verifier etc)
-                /*Graphe myGraphe{fichier, fichierPoids};
-                myGraphe.affichagePareto()*/
+                system("cls");
+                Graphe myGraphe{fichier, fichierPoids};
+                myGraphe.affichagePareto(1, 0);
+                std::cout << "Termine !"; system("pause>nul");
+                afficherInstructions(fichier, fichierPoids, x, y);
             }
             continue;
         }
