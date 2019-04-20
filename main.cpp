@@ -77,27 +77,23 @@ std::vector<std::vector<bool>*> remplirBool(std::vector<std::vector<bool>*> myBo
             (*v).push_back(1);
 
 		myBool.push_back(v);
-		delete(v);
+		//delete(v);
 	}
 	return myBool;
 }
 
 void printVector3(std::vector < std::vector < std::vector < float > > > testDij, int taille)
 {
-    for(int i=0; i<taille; i++) std::cout << "  " << i;
-    std::cout << std::endl;
-
     for (unsigned int i = 0; i < testDij.size(); i++)
     {
         for (unsigned int j = 0; j < testDij[i].size(); j++)
         {
-            std::cout << j << " ";
-
             for (unsigned int k = 0; k < testDij[i][j].size(); k++)
             {
-                std::cout << testDij[i][j][k] << "  ";
+                std::cout << "{" << testDij[i][j][k] << "}";
             }
             std::cout << std::endl;
         }
+        std::cout << std::endl;
     }
 }

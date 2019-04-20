@@ -197,15 +197,23 @@ std::vector < std::vector < std::vector < float > > > Graphe::dijkstra(unsigned 
             /// on trie ce parcours par index de sommet croissant
             std::sort(recupParcours.begin(), recupParcours.end());
 
+            /** voir si dijkstra fonctionne
+            for(unsigned int u = 0; u<recupParcours.size(); ++u)
+            {
+                std::cout << "sommet : " << j << " - (arrive, poids) = (" << recupParcours[u].first
+                        << ", " << recupParcours[u].second << ")" << std::endl;
+            }
+            */
+
             /// on ajoute dans la matrice la distance de tous les sommets par rapport au sommet de départ
             for(unsigned int k; k<recupParcours.size(); ++k)
                 (*newAretes).push_back(recupParcours[k].second);
 
             (*newGraphe).push_back(*newAretes);
-            delete (newAretes);
+            //delete (newAretes);
         }
         vectorMatrice.push_back(*newGraphe);
-        delete (newGraphe);
+        //delete (newGraphe);
     }
     return vectorMatrice;
 }
@@ -284,7 +292,7 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
     /// Tous les sommets sont à une distance infinie du sommet de départ (celui ci est à 0)
     for(size_t i=0; i<m_sommets.size(); ++i)
     {
-        if(i == 0) distance.push_back(0);
+        if(i == depart->getIndex()) distance.push_back(0);
         else distance.push_back(infinity);
     }
 
@@ -319,8 +327,8 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
                 /// variable pour savoir si le sommet que l'on veut ajouter existe déjà dans le vector retour
                 bool existe(0);
 
-                for(unsigned int i; i<l_pred.size(); ++i)
-                    if(l_pred[i].first == s->getIndex())
+                for(unsigned int i = 0; i<l_pred.size(); ++i)
+                    if(l_pred[i].first == m_sommets[autreSommet(v, s)]->getIndex())
                     {
                         /// le sommet existe déjà, on change son arête empruntée
                         l_pred[i].second = distance[autreSommet(v, s)];
@@ -329,7 +337,7 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
                     }
 
                 /// Si ce sommet n'était pas encore dans la map on l'ajoute
-                if(existe) l_pred.push_back(std::make_pair(autreSommet(v, s), distance[autreSommet(v, s)]));
+                if(!existe) l_pred.push_back(std::make_pair(autreSommet(v, s), distance[autreSommet(v, s)]));
 
                 /// on ajoute à la file de priorité le sommet voisin si il n'est pas déjà marqué
                 boolMarque = 0;
