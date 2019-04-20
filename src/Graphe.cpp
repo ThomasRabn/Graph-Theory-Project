@@ -654,5 +654,10 @@ void Graphe::dessiner(Svgfile& svgout, std::vector<bool> vecBool, int x, int y, 
     }
 }
 
+Graphe Graphe::ajoutPireCheminOptimisable(Graphe grapheEntry, Graphe grapheTotal){
+  Graphe myGraphe = grapheEntry;
+
+}
+
 Graphe::~Graphe()
 { }
