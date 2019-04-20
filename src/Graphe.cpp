@@ -299,8 +299,8 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
         /// vide le vector d'arete du précédent sommet
 
         /// on ajoute les aretes du sommet actuel
-        for(size_t i=0; i<s->getAretesSommet().size(); ++i)
-            if((*myBool)[i])
+        for(unsigned int i=0; i<s->getAretesSommet().size(); ++i)
+            if((*myBool)[s->getAretesSommet()[i]])
                 aretesConnectees.push_back(m_aretes[s->getAretesSommet()[i]]);
 
         /// on les trie selon leur poids, un algorythme de tri plus performant fonctionne pour les valeurs 0 et 1

@@ -36,11 +36,9 @@ class Graphe
     std::vector <Arete*> trierPoidsAretes2(std::vector <Arete*> aretesConnectees, unsigned int poids);
 
     int autreSommet(Arete* a, Sommet* s);
-    std::vector < std::pair <int, float> >
-    parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart, std::vector<bool>* myBool);
+    std::vector < std::pair <int, float> > parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart, std::vector<bool>* myBool);
 
-    std::vector < std::vector < std::vector < float > > >
-     dijkstra(unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
+    std::vector < std::vector < std::vector < float > > > dijkstra(unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
 
     /*************************
     *************************/

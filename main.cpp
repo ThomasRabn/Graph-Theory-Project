@@ -79,7 +79,6 @@ std::vector<std::vector<bool>*> remplirBool(std::vector<std::vector<bool>*> myBo
 		myBool.push_back(v);
 		delete(v);
 	}
-
 	return myBool;
 }
 
