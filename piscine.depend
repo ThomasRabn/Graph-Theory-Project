@@ -138,3 +138,44 @@
 
 1555620664 c:\users\thomas\desktop\projetpiscine\include\utile.h
 
+1555776032 source:c:\users\paulb\desktop\projetpiscine\src\arete.cpp
+	"Arete.h"
+
+1555776032 c:\users\paulb\desktop\projetpiscine\include\arete.h
+	"Sommet.h"
+
+1555776032 c:\users\paulb\desktop\projetpiscine\include\sommet.h
+	<vector>
+	<iostream>
+	"Arete.h"
+	<algorithm>
+
+1555776032 source:c:\users\paulb\desktop\projetpiscine\src\sommet.cpp
+	"Sommet.h"
+
+1555776032 source:c:\users\paulb\desktop\projetpiscine\src\svgfile.cpp
+	<iostream>
+	<sstream>
+
+1555776021 source:c:\users\paulb\desktop\projetpiscine\main.cpp
+	"svgfile.h"
+	"Graphe.h"
+	<windows.h>
+	<conio.h>
+	<cstdlib>
+
+1555776032 c:\users\paulb\desktop\projetpiscine\include\svgfile.h
+	<string>
+	<fstream>
+	<set>
+
+1555776032 c:\users\paulb\desktop\projetpiscine\include\graphe.h
+	<unordered_map>
+	<iomanip>
+	<queue>
+	<sstream>
+	<algorithm>
+	<limits>
+	"Sommet.h"
+	"svgfile.h"
+

@@ -160,6 +160,7 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
 /// elle retourne sous forme de vector toutes ces matrices
 std::vector < std::vector < std::vector < float > > > Graphe::dijkstra(unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool)
 {
+    unsigned int i, j, k;
     /// notre vecteur de matrices que nous retournous
     /// de la forme : numeroGraphe < X < Y < poids du chemin entre X et Y > > >
     std::vector < std::vector < std::vector < float > > > vectorMatrice;
@@ -168,14 +169,14 @@ std::vector < std::vector < std::vector < float > > > Graphe::dijkstra(unsigned 
     std::vector < std::pair <int, float> > recupParcours;
 
     /// Défile les graphes possibles
-    for (unsigned int i = 0; i < myBool.size(); ++i)
+    for (i = 0; i < myBool.size(); ++i)
     {
         /// matrice que l'on ajoutera à notre vector de matrice
         //std::vector < std::vector < float > > newGraphe;
         std::vector <std::vector < float > >* newGraphe = new std::vector <std::vector < float > >;
 
         /// Défile les sommets du graphe selectionné
-        for (unsigned int j = 0; j < m_sommets.size(); ++j)
+        for (j = 0; j < m_sommets.size(); ++j)
         {
             /// vector que l'on ajoutera à notre matrice
             //std::vector < float > newAretes;
@@ -187,23 +188,15 @@ std::vector < std::vector < std::vector < float > > > Graphe::dijkstra(unsigned 
             /// on trie ce parcours par index de sommet croissant
             std::sort(recupParcours.begin(), recupParcours.end());
 
-            /** voir si dijkstra fonctionne
-            for(unsigned int u = 0; u<recupParcours.size(); ++u)
-            {
-                std::cout << "sommet : " << j << " - (arrive, poids) = (" << recupParcours[u].first
-                        << ", " << recupParcours[u].second << ")" << std::endl;
-            }
-            */
-
             /// on ajoute dans la matrice la distance de tous les sommets par rapport au sommet de départ
-            for(unsigned int k; k<recupParcours.size(); ++k)
+            for(k = 0; k<recupParcours.size(); ++k)
                 (*newAretes).push_back(recupParcours[k].second);
 
             (*newGraphe).push_back(*newAretes);
-            //delete (newAretes);
+            delete (newAretes);
         }
         vectorMatrice.push_back(*newGraphe);
-        //delete (newGraphe);
+        delete (newGraphe);
     }
     return vectorMatrice;
 }
