@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <limits>
 #include "Sommet.h"
-#include "Arete.h"
+//#include "Arete.h"
 #include "svgfile.h"
 
 class Graphe
@@ -45,22 +45,23 @@ class Graphe
     std::vector<int> giveSolutionsNonDominees(std::vector<std::vector<float>*> vecPoidsSolutions, int& maxX, int& minY); /// Retourne un vecteur de int contenant les indices des solutions optimums (qui sont stockees à la fin de vecPoidsSolutions)
     void affichagePareto(bool toggleDijkstra = 0, int indicePoidsDijkstra = 1);
 
-    ///Extension d'optimisation du pire chemin en fonction du temps
-    Graphe ajoutPireCheminOptimisable(Graphe grapheEntry, Graphe grapheTotal);
-
     /*************************
     *************************/
 
-    //void trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
-    std::vector <Arete*> trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
+    void trierPoidsAretes(std::vector <Arete*> aretesConnectees, unsigned int poids);
+    std::vector <Arete*> trierPoidsAretes2(std::vector <Arete*> aretesConnectees, unsigned int poids);
 
     int autreSommet(Arete* a, Sommet* s);
-    std::unordered_map<int, int> parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart);
+    std::vector < std::pair <int, float> > parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart, std::vector<bool>* myBool);
 
-    std::vector < std::vector < std::pair<int, int> > > dijkstra(unsigned int indexOfPoids, Sommet* depart);
+    std::vector < std::vector < std::vector < float > > > dijkstra(unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
 
     /*************************
     *************************/
+
+
+    ///Extension d'optimisation du pire chemin en fonction du temps
+    Graphe ajoutPireCheminOptimisable(Graphe grapheEntry, Graphe grapheTotal);
 };
 
 #endif // GRAPHE_H
