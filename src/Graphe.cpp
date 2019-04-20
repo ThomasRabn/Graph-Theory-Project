@@ -442,16 +442,25 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
     if(toggleDijkstra)  vecSolutionsTaille = ensembleGraphesPartiels(true); /// Retourne tous les graphes partiels d'au moins ordre-1 aretes
     else                vecSolutionsTaille = ensembleGraphesPartiels(false);/// Retourne tous les graphes partiels de ordre-1 aretes
     std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille); /// Retourne tous les arbres couvrant faisant partie de vecSolutionsTaille
+    std::cout << std::endl << "Solutions couvrantes trouvees !" << std::endl;
 
     /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
     if(toggleDijkstra) {
+        std::vector<std::vector<std::vector<float>>> vecDij = dijkstra(indicePoidsDijkstra, vecSolutionsCouvrantes);
+        std::vector<float>* sommesTempsParcours = new std::vector<float>;
+        *sommesTempsParcours = resultatGraphe(vecDij);
         for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
             std::vector<float>* poidsSolution =  new std::vector<float>;
-            if ((int)i == indicePoidsDijkstra) {
-                std::vector<std::vector<std::vector<float>>> vecDij = dijkstra(indicePoidsDijkstra, vecSolutionsCouvrantes);
-                *poidsSolution = resultatGraphe(vecDij);
-            } else{
-                *poidsSolution = resultatGraphe(*(vecSolutionsCouvrantes[i]));
+            for(unsigned int j = 0; j < 2; ++j) {
+                if ((int)j == indicePoidsDijkstra) {
+                    (*poidsSolution).push_back((*sommesTempsParcours)[i]);
+                } else{
+                    float resultatPoids = 0;
+                    for (unsigned int k = 0; k < getAretes().size(); ++k) {
+                        if((*(vecSolutionsCouvrantes[i]))[k])  { resultatPoids += m_aretes[k]->getPoids(j); }
+                    }
+                    (*poidsSolution).push_back(resultatPoids);
+                }
             }
             (*poidsSolution).push_back(i);
             vecPoidsSolutions.push_back(poidsSolution);
@@ -464,6 +473,7 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
             vecPoidsSolutions.push_back(poidsSolution);
         }
     }
+    std::vector<std::vector<float>*> vecPoidsSolutionsNonTriees = vecPoidsSolutions;
     /// On tri le vecteur de poids pour mettre en premier ceux avec le poids[0] le plus petit (utilisation d'une fonction lambda)
     std::sort(vecPoidsSolutions.begin(), vecPoidsSolutions.end(), [](const auto& cour, const auto& suiv) {
         for(unsigned int i = 0; i < (*cour).size()-1; ++i) {
@@ -483,7 +493,7 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
     std::vector<int> vecIndicesSolutionsNonDominees = giveSolutionsNonDominees(vecPoidsSolutions, maxX, minY);
 
     /// Affiche tous les graphes solutions sur un fichier SVG
-    dessinerPareto(vecIndicesSolutionsNonDominees, vecSolutionsCouvrantes, vecPoidsSolutions, minX, maxX, minY, maxY);
+    dessinerPareto(vecIndicesSolutionsNonDominees, vecSolutionsCouvrantes, vecPoidsSolutions, minX, maxX, minY, maxY, vecPoidsSolutionsNonTriees, toggleDijkstra);
 
     /// On désalloue la mémoire (on ne désalloue pas vecSolutionsCouvrantes car il est inclu dans vecSolutionTaille)
     for(auto ptr : vecSolutionsTaille) {
@@ -509,8 +519,8 @@ std::vector<int> Graphe::giveSolutionsNonDominees(std::vector<std::vector<float>
     return vecIndicesSolutionsNonDominees;
 }
 
-void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std::vector<std::vector<bool>*> vecSolutionsCouvrantes,
-                            std::vector<std::vector<float>*> vecPoidsSolutions, int minX, int maxX, int minY, int maxY)
+void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std::vector<std::vector<bool>*> vecSolutionsCouvrantes,std::vector<std::vector<float>*> vecPoidsSolutions,
+                            int minX, int maxX, int minY, int maxY, std::vector<std::vector<float>*> vecPoidsSolutionsNonTriees, bool toggleDijkstra)
 {
     /// Creation des variables et ajouts des axes du graphique
     Svgfile svgout("output.svg", 5000, 20000);
@@ -524,29 +534,49 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
 
     int rayonFaux = 2, rayonVrai = 5;
     float coeffBasX, coeffHautX, coeffBasY, coeffHautY; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
-    if(vecSolutionsCouvrantes.size() < 100) {
-        coeffBasX = 0.25; coeffHautX = 0.5; coeffBasY = 0.25; coeffHautY = 0.5;
-    } else if (vecSolutionsCouvrantes.size() < 1000) {
-        coeffBasX = 0.1; coeffHautX = 0.5; coeffBasY = 0.1; coeffHautY = 0.7;
+    if(toggleDijkstra) {
+        coeffBasX = 0.1; coeffHautX = 0; coeffBasY = 0.1; coeffHautY = 0.2;
     } else{
-        coeffBasX = 0.1; coeffHautX = 0.5; coeffBasY = 0.1; coeffHautY = 0.6;
+        if(vecSolutionsCouvrantes.size() < 100) {
+            coeffBasX = 0.3; coeffHautX = 0.5; coeffBasY = 0.3; coeffHautY = 0.5;
+        } else if (vecSolutionsCouvrantes.size() < 1000) {
+            coeffBasX = 0.1; coeffHautX = 0.5; coeffBasY = 0.1; coeffHautY = 0.7;
+        } else{
+            coeffBasX = 0.1; coeffHautX = 0.5; coeffBasY = 0.1; coeffHautY = 0.6;
+        }
     }
 
     float lastX = -1, lastY = -1, coeffRayon = 1;
-    for(auto it : vecPoidsSolutions) {
-        if ((*it)[0] != lastX || (*it)[1] != lastY) {
-            float posX = mapping((*it)[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
-            float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
-            lastX = (*it)[0];
-            lastY = (*it)[1];
-            svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
-            coeffRayon = 1;
-        } else {
-            if(coeffRayon < 6.6) coeffRayon+=.02;
+    if(!toggleDijkstra) {
+        for(auto it : vecPoidsSolutions) {
+            if ((*it)[0] != lastX || (*it)[1] != lastY) {
+                float posX = mapping((*it)[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
+                float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
+                lastX = (*it)[0];
+                lastY = (*it)[1];
+                svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
+                coeffRayon = 1;
+            } else {
+                if(coeffRayon < 6.6) coeffRayon+=.02;
+            }
+        }
+    } else{
+        for(auto it : vecPoidsSolutions) {
+            if ((*it)[0] != lastX || (*it)[1] - lastY > 10) {
+                float posX = mapping((*it)[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
+                float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
+                lastX = (*it)[0];
+                lastY = (*it)[1];
+                svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
+                coeffRayon = 1;
+            } else {
+                if(coeffRayon < 6.6) coeffRayon+=.1;
+            }
         }
     }
+
     for(auto it : vecIndicesSolutionsNonDominees) {
-        std::vector<float> vecPoidsNonDominees = resultatGraphe(*(vecSolutionsCouvrantes[it]));
+        std::vector<float> vecPoidsNonDominees = *(vecPoidsSolutionsNonTriees[it]);
         float posX = mapping(vecPoidsNonDominees[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
         float posY = mapping(vecPoidsNonDominees[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
         svgout.addDisk(posX, posY, rayonVrai, 100, svgout.makeRGB(0,200,0));

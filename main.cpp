@@ -88,7 +88,7 @@ void menu() {
             else if(y == 6) {
                 system("cls");
                 Graphe myGraphe{fichier, fichierPoids};
-                myGraphe.affichagePareto(1, 0);
+                myGraphe.affichagePareto(1, 1);
                 std::cout << "Termine !"; system("pause>nul");
                 afficherInstructions(fichier, fichierPoids, x, y);
             }
