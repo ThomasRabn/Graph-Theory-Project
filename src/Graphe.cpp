@@ -288,6 +288,7 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
         pq.pop();
 
         /// vide le vector d'arete du précédent sommet
+        aretesConnectees.clear();
 
         /// on ajoute les aretes du sommet actuel
         for(unsigned int i=0; i<s->getAretesSommet().size(); ++i)
@@ -562,7 +563,7 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
         }
     } else{
         for(auto it : vecPoidsSolutions) {
-            if ((*it)[0] != lastX || (*it)[1] - lastY > 10) {
+            if ((*it)[0] != lastX || ((*it)[1] != lastY && vecPoidsSolutions.size() < 100) || (*it)[1] - lastY > 5) {
                 float posX = mapping((*it)[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
                 float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
                 lastX = (*it)[0];
@@ -594,12 +595,12 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
             if(m_sommets[indSommet]->getY() < minY)     minY = m_sommets[indSommet]->getY();
         }
         std::string poids = "(";
-        for(unsigned int j = 0; j <  (resultatGraphe(solution)).size(); ++j) {
+        for(unsigned int j = 0; j <  (*vecPoidsSolutionsNonTriees[vecIndicesSolutionsNonDominees[i]]).size()-1; ++j) {
             std::stringstream number;
-            number << (int)(resultatGraphe(solution))[j];
+            number << (int)(*vecPoidsSolutionsNonTriees[vecIndicesSolutionsNonDominees[i]])[j];
             poids.append(number.str());
-            if(j != (resultatGraphe(solution)).size()-1)    poids.append(" ; ");
-            else                                            poids.append(")");
+            if(j != (*vecPoidsSolutionsNonTriees[vecIndicesSolutionsNonDominees[i]]).size()-2)   poids.append(" ; ");
+            else                                                poids.append(")");
             svgout.addText(x+(minX+maxX)/4-25, y+minY/2-20, poids);
         }
         if ((i+1)%3 == 0)   { y+=250; x = 100; }
