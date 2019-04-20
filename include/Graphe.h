@@ -45,6 +45,9 @@ class Graphe
     std::vector<int> giveSolutionsNonDominees(std::vector<std::vector<float>*> vecPoidsSolutions, int& maxX, int& minY); /// Retourne un vecteur de int contenant les indices des solutions optimums (qui sont stockees à la fin de vecPoidsSolutions)
     void affichagePareto(bool toggleDijkstra = 0, int indicePoidsDijkstra = 1);
 
+    ///Extension d'optimisation du pire chemin en fonction du temps
+    Graphe ajoutPireCheminOptimisable(Graphe grapheEntry, Graphe grapheTotal);
+
     /*************************
     *************************/
 
