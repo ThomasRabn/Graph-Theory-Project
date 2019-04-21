@@ -831,7 +831,7 @@ void Graphe::pireCheminDijkstra(Graphe origine, Graphe &optimisable){
         std::cout << "Le meilleurs chemin est : " << std::endl;
 
         for (unsigned int i=0 ; i<vecChemin[x][y].size() ; ++i){
-            if (i==vecChemin[x][y].size()){
+            if (i==vecChemin[x][y].size()-1){
                 std::cout << vecChemin[x][y][i];
             }
             else std::cout << vecChemin[x][y][i] << " -> ";
