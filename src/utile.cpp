@@ -250,7 +250,7 @@ int choisirPoids(Graphe* myGraphe) {
 
 void choisirFichiersExtension(std::string& fichier, std::string& fichierPoids, std::string& fichierAOptimiser, std::string& fichierPoidsAOptimiser) {
     system("cls");
-    int x = 0, y = 1;
+    int x = 0, y = 2;
     bool run = 1;
 
     std::cout << "Quel fichier voulez-vous choisir ? Fichier actuel : " << fichier << "; Fichier poids actuel : " << fichierPoids << "; Fichier a optimiser : " << fichierAOptimiser << "; Fichier poids a optimiser : " << fichierPoidsAOptimiser << std::endl
