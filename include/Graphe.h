@@ -11,6 +11,7 @@
 //#include "Arete.h"
 #include "svgfile.h"
 
+
 class Graphe
 {
   private:
@@ -51,8 +52,9 @@ class Graphe
     int autreSommet(Arete* a, Sommet* s);
 
     /// Dijkstra
-    float parcoursDijkstra(unsigned int indexOfPoids, Sommet* depart, std::vector<bool>* myBool);
-    std::vector <float> dijkstra (unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
+    std::vector < std::pair <int, float> > parcoursDijkstra(unsigned int poids, Sommet* depart, std::vector<bool>* myBool);
+
+    std::vector < std::vector < std::vector < float > > > dijkstra(unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
 
     ///Extension d'optimisation du pire chemin en fonction du temps
     Graphe ajoutPireCheminOptimisable(Graphe grapheEntry, Graphe grapheTotal);
