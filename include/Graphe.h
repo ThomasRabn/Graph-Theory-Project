@@ -6,10 +6,10 @@
 #include <queue>
 #include <sstream>
 #include <limits>
+#include "time.h"
 #include "Sommet.h"
 #include "Arete.h"
 #include "svgfile.h"
-
 
 class Graphe
 {

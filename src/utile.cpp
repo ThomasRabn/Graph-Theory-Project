@@ -9,14 +9,14 @@ void gotoXY(int x,int y); // Utilise dans le menu interactif
 void afficherInstructions(std::string fichier, std::string fichierPoids, int& x, int& y) {
     system("cls");
     x = 0; y = 1;
-    std::cout << "Que voulez-faire ? Fichier ouvert : " << fichier << "; Fichier poids ouvert : " << fichierPoids << std::endl
+    std::cout << "Que voulez-vous faire ? Fichier ouvert : " << fichier << "; Fichier poids ouvert : " << fichierPoids << std::endl
               << "0) Quitter" << std::endl
               << "1) Choisir un fichier texte" << std::endl
               << "2) Dessiner le graphe" << std::endl
               << "3) Lancer Kruskal" << std::endl
               << "4) Lancer Pareto simple" << std::endl
               << "5) Lancer Pareto en choisissant une ponderation en tant que temps de trajet" << std::endl
-              << "6) Lancer Pareto en choisissant une ne gardant que les aretes \"parfaites\" (double Kruskal)"  << std::endl;
+              << "6) Lancer Pareto en ne gardant que les aretes \"parfaites\" (double Kruskal)"  << std::endl;
 }
 
 /// OUVRE UN MENU PROPOSANT DIFFERENTES CHOSES A FAIRE A L'UTILISATEUR
@@ -55,10 +55,15 @@ void menu() {
 
             else if(y == 3) {
                 system("cls");
-                Graphe myGraphe{fichier, fichierPoids};
-                Svgfile svgout;
-                myGraphe.dessiner(svgout, 0, 0, 1, 2);
-                myGraphe.libererMemoire();
+                bool poids;
+                std::cout << "Voulez-vous afficher les poids des aretes ? (1 : Oui / 0 : Non) : ";
+                entreeClavier(poids);
+                if(1) {
+                    Graphe myGraphe{fichier, fichierPoids};
+                    Svgfile svgout("output.svg", 10000, 10000);
+                    myGraphe.dessiner(svgout, 450, 0, poids, 2);
+                    myGraphe.libererMemoire();
+                }
                 std::cout << "Termine !"; system("pause>nul");
                 afficherInstructions(fichier, fichierPoids, x, y);
             }
@@ -111,7 +116,7 @@ void choisirFichiers(std::string& fichier, std::string& fichierPoids) {
     int x = 0, y = 1;
     bool run = 1;
 
-    std::cout << "Quel fichier voulez vous choisir ? Fichier actuel : " << fichier << "; Fichier poids actuel : " << fichierPoids << std::endl
+    std::cout << "Quel fichier voulez-vous choisir ? Fichier actuel : " << fichier << "; Fichier poids actuel : " << fichierPoids << std::endl
               << "0) Broadway" << std::endl
               << "1) Cubetown" << std::endl
               << "2) Triville" << std::endl
@@ -210,7 +215,7 @@ int choisirPoids(Graphe* myGraphe) {
     system("cls");
     int choix = 0;
     bool run = 1;
-    std::cout << "En fonction de quel poids voulez vous le lancer ?" << std::endl;
+    std::cout << "En fonction de quel poids voulez-vous le lancer ?" << std::endl;
     do{
         if(!(std::cin >> choix)) {
             std::cout << "Mauvaise entree" << std::endl;

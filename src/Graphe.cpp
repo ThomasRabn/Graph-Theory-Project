@@ -1,8 +1,6 @@
 #include "Graphe.h"
-#include <vector>
-#include "time.h"
 
-/// FONCTION PERMETTANT DE PASSER D'UN INTERVALLE A UN AUTRE
+/// FONCTION PERMETTANT DE PASSER D'UN INTERVALLE A UN AUTRE, fonction map() sur l'IDE Arduino
 float mapping(float value, float minIn, float maxIn, float minOut, float maxOut) {
     return (value - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
 }
