@@ -16,7 +16,8 @@ void afficherInstructions(std::string fichier, std::string fichierPoids, int& x,
               << "3) Lancer Kruskal" << std::endl
               << "4) Lancer Pareto simple" << std::endl
               << "5) Lancer Pareto en choisissant une ponderation en tant que temps de trajet" << std::endl
-              << "6) Lancer Pareto en ne gardant que les aretes \"parfaites\" (double Kruskal)"  << std::endl;
+              << "6) Lancer Pareto en ne gardant que les aretes \"parfaites\" (double Kruskal)"  << std::endl
+              << "7) Optimiser le pire chemin d'un graphe a partir d'un fichier texte"  << std::endl;
 }
 
 /// OUVRE UN MENU PROPOSANT DIFFERENTES CHOSES A FAIRE A L'UTILISATEUR
@@ -24,14 +25,14 @@ void menu() {
     bool run = 1;
     int x, y;
 
-    std::string fichier = "files/broadway.txt", fichierPoids = "files/broadway_weights_0.txt";
+    std::string fichier = "files/broadway.txt", fichierPoids = "files/broadway_weights_0.txt", fichierAOptimiser = "files/broadwayTest.txt", fichierPoidsAOptimiser = "files/broadwayTestPoids.txt";
     afficherInstructions(fichier, fichierPoids, x, y);
 
     do{
         gotoXY(x, y);
         system("pause>nul");  // Arrete tout (nul permet de ne pas avoir d'affichage)
 
-        if (GetAsyncKeyState(VK_DOWN) && y < 7) {
+        if (GetAsyncKeyState(VK_DOWN) && y < 8) {
 			++y;
 			gotoXY(x,y);
 			continue;
@@ -101,6 +102,17 @@ void menu() {
                 Graphe myGraphe{fichier, fichierPoids};
                 myGraphe.affichagePareto(2);
                 myGraphe.libererMemoire();
+                std::cout << "Termine !"; system("pause>nul");
+                afficherInstructions(fichier, fichierPoids, x, y);
+            }
+            else if(y == 8){
+                system("cls");
+                choisirFichiersExtension(fichier, fichierPoids, fichierAOptimiser, fichierPoidsAOptimiser);
+                Graphe myGraphe{fichier, fichierPoids};
+                Graphe myGrapheOptimisable{fichierAOptimiser, fichierPoidsAOptimiser};
+                myGraphe.pireCheminDijkstra(myGraphe, myGrapheOptimisable);
+                myGraphe.libererMemoire();
+                myGrapheOptimisable.libererMemoire();
                 std::cout << "Termine !"; system("pause>nul");
                 afficherInstructions(fichier, fichierPoids, x, y);
             }
@@ -201,6 +213,8 @@ void choisirFichiers(std::string& fichier, std::string& fichierPoids) {
     } while(run);
 }
 
+
+
 /// FONCTION TROUVEE SUR http://www.cplusplus.com/forum/beginner/132595/
 /// Permet de deplacer un le curseur de la console a la position (x;y)
 void gotoXY(int x, int y)
@@ -232,4 +246,66 @@ int choisirPoids(Graphe* myGraphe) {
     system("cls");
 
     return choix;
+}
+
+void choisirFichiersExtension(std::string& fichier, std::string& fichierPoids, std::string& fichierAOptimiser, std::string& fichierPoidsAOptimiser) {
+    system("cls");
+    int x = 0, y = 1;
+    bool run = 1;
+
+    std::cout << "Quel fichier voulez-vous choisir ? Fichier actuel : " << fichier << "; Fichier poids actuel : " << fichierPoids << "; Fichier a optimiser : " << fichierAOptimiser << "; Fichier poids a optimiser : " << fichierPoidsAOptimiser << std::endl
+              << "1) Option de test avec un fichier par default " << std::endl
+              << "2) Choisir nos fichier a la main " << std::endl;
+    do{
+        gotoXY(x, y);
+        system("pause>nul");  // Arrete tout (nul permet de ne pas avoir d'affichage)
+
+        if (GetAsyncKeyState(VK_DOWN) && y < 3) {
+			++y;
+			gotoXY(x,y);
+			continue;
+		}
+
+		else if (GetAsyncKeyState(VK_UP) && y > 2) {
+            --y;
+            gotoXY(x, y);
+            continue;
+        }
+
+        else if (GetAsyncKeyState(VK_RETURN)) {
+            if(y == 2) {
+                system("cls"); std::cout << "Broadway choisi." << std::endl;
+                fichier = "files/broadway.txt";
+                fichierPoids = "files/broadway_weights_0.txt";
+                fichierAOptimiser = "files/broadwayTest.txt";
+                fichierPoidsAOptimiser = "files/broadwayTestPoids.txt";
+                std::cout << "Enregistre !";
+                run = 0;
+            }
+            if(y == 3) {
+                system("cls"); std::cout << "Entrez le chemin et le nom du fichier (ex : files/fichier.txt) (0 pour annuler) : ";
+                std::string nom1;
+                entreeClavier(nom1);
+                std::cout << "Entrez le chemin et le nom du fichier de poids (0 pour annuler) : ";
+                std::string nom2;
+                entreeClavier(nom2);
+                std::cout << "Entrez le chemin et le nom du fichier du graphe a optimiser (0 pour annuler) : ";
+                std::string nom3;
+                entreeClavier(nom3);
+                std::cout << "Entrez le chemin et le nom du fichier du ficher de poids du graphe a optimiser (0 pour annuler) : ";
+                std::string nom4;
+                entreeClavier(nom4);
+                if (nom1 == "0" || nom2 == "0" || nom3 == "0" || nom4 == "0") { std::cout << std::endl << "Annule !"; }
+                else{
+                    fichier = nom1;
+                    fichierPoids = nom2;
+                    fichierAOptimiser = nom3;
+                    fichierPoidsAOptimiser = nom4;
+                    std::cout << std::endl << "Enregistre !";
+                }
+                run = 0;
+            }
+            continue;
+        }
+    } while(run);
 }

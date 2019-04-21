@@ -136,7 +136,99 @@ Graphe Graphe::parcourKruskal(unsigned int indexOfPoids) {
     return myGraphe;
 }
 
-/// DIJKSTRA
+///         DIJKSTRA        ///
+
+/// DIJKSTRA PIRE
+std::vector < std::vector < std::vector <int> > >Graphe::pireDijkstra(unsigned int indexOfPoids)
+{
+    unsigned int i, z;
+    /// ce que cette fonction retourne
+    /// sommet départ < sommet arrivé< liste des sommets parcourus < int > > >
+    std::vector < std::vector < std::vector <int> > > retour;
+
+    /// ce que nous retourne le parcoursDijkstra
+    /// <Id sommet arrivé, Id arete empruntée>
+    std::vector < std::pair <int, float> > recupParcours;
+
+    /// notre liste de prédecesseur, pour connaître le trajet sommet par sommet
+    /// <Id sommet arrivé, Id sommet départ>
+    std::unordered_map <int, int > l_pred;
+
+    /// toutes les arêtes sont actives, nécessaire pour parcours dijkstra
+    std::vector <bool> myBool(m_sommets.size(), 1);
+
+    for(i=0; i<m_sommets.size(); ++i)       /// pour chaque sommet on applique Dijkstra
+    {
+        std::vector < std::vector <int> >* newSommet = new std::vector < std::vector < int > >;
+
+        recupParcours = parcoursDijkstra(indexOfPoids, m_sommets[i], &myBool, 1);
+        std::sort(recupParcours.begin(), recupParcours.end());
+
+        l_pred.clear();
+
+        /// on transvase dans notre liste de prédécesseurs
+        for(z = 0; z < recupParcours.size(); ++z)
+        {
+            if(recupParcours[z].second != -1)
+            {
+                l_pred.insert({ recupParcours[z].first,
+                                autreSommet(m_aretes[recupParcours[z].second],
+                                            m_sommets[recupParcours[z].first])});
+            }
+
+        }
+
+        /// on défile notre liste de prédecesseurs afin de connaître les chemins de sommet en sommet
+        /// on les ajouteras ensuite à notre vector retour
+        for(auto s:l_pred)
+        {
+            /// le vector contenant le chemin
+            std::vector < int >* newChemin = new std::vector < int >;
+
+            if(s.second != -1)  /// on ne cherche pas de chemin depuis lui même
+            {
+                (*newChemin).push_back(s.first);
+
+                /// pour transvaser depuis la map vers le vector
+                std::pair<int, int> pred = s;
+
+                /// depuis le sommet duquel on est jusqu'au sommet de départ
+                while(pred.second != m_sommets[i]->getIndex())
+                {
+                    pred =*l_pred.find(pred.second);
+
+                    /// on ajoute le nouveau sommet au chemin
+                    (*newChemin).push_back(pred.first);
+                }
+            }
+            (*newChemin).push_back(m_sommets[i]->getIndex());
+            (*newSommet).push_back(*newChemin);
+            delete(newChemin);
+        }
+        retour.push_back(*newSommet);
+        delete(newSommet);
+    }
+
+    /// affichage matrice résultat
+    /*
+    unsigned int j,k;
+    for(i = 0; i <retour.size(); ++i)
+    {
+       for(j = 0; j < retour[i].size(); ++j)
+       {
+            for(k = 0; k < retour[i][j].size(); ++k)
+            {
+                std::cout << "{ " << retour[i][j][k] << " }";
+            }
+            std::cout << std::endl;
+       }
+       std::cout << std::endl;
+    }
+    std::cout << std::endl;
+    */
+
+    return retour;
+}
 
 /// DIJKSTRA PARTERO
 /// cette fonction reçoit la matrice de bool contenant tous les graphes possibles obtenus pas Pareto
@@ -165,7 +257,7 @@ std::vector < std::vector < std::vector < float > > > Graphe::dijkstra(unsigned 
             std::vector < float >* newAretes = new std::vector < float >;
 
             /// on applique dijkstra sur ce sommet
-            recupParcours = parcoursDijkstra(indexOfPoids, m_sommets[j], myBool[i]);
+            recupParcours = parcoursDijkstra(indexOfPoids, m_sommets[j], myBool[i], 0);
 
             /// on trie ce parcours par index de sommet croissant
             std::sort(recupParcours.begin(), recupParcours.end());
@@ -201,17 +293,21 @@ int Graphe::autreSommet(Arete* a, Sommet* s)
     return a->getS1();
 }
 
-/// DIJKSTRA PARTERO - PARCOURS
+/// DIJKSTRA - PARCOURS
 ///     POIDS est soit le COUT (0), soit la DISTANCE (1)
 ///     SOMMET depuis lequel on applique l'algorythme
 ///     MYBOOL indique si une arête est prise ou non
-std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poids, Sommet* depart, std::vector<bool>* myBool)
+
+/// mode 0, retourne <sommet Arrivé, poids depuis départ>
+/// mode 1, retourne <sommet Arrivé, arete empruntee>
+std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poids, Sommet* depart, std::vector<bool>* myBool, int mode)
 {
     /// la vector que l'on retourne : <Id sommet arrivé, Distance depuis départ>
     std::vector < std::pair <int, float> > l_pred;
 
     /// On peut alors l'insérer le sommet de départ
-    l_pred.push_back(std::make_pair(depart->getIndex(), 0));
+    if(mode == 0) l_pred.push_back(std::make_pair(depart->getIndex(), 0));
+    else l_pred.push_back(std::make_pair(depart->getIndex(), -1));
 
     /// la priority_queue sera dans l'ordre croissant, avec (Poids, Sommet)
     std::priority_queue< std::pair<float, Sommet*>, std::vector < std::pair<float, Sommet*> > , std::greater< std::pair<float, Sommet*> > > pq;
@@ -275,13 +371,22 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
                     if(l_pred[i].first == m_sommets[autreSommet(v, s)]->getIndex())
                     {
                         /// le sommet existe déjà, on change son arête empruntée
-                        l_pred[i].second = distance[autreSommet(v, s)];
+                        if(mode == 0) l_pred[i].second = distance[autreSommet(v, s)];
+                        else l_pred[i].second = v->getIndex();
+
                         existe = 1;
                         break;
                     }
 
                 /// Si ce sommet n'était pas encore dans la map on l'ajoute
-                if(!existe) l_pred.push_back(std::make_pair(autreSommet(v, s), distance[autreSommet(v, s)]));
+                if(!existe)
+                {
+                    if(mode == 0)
+                        l_pred.push_back(std::make_pair(autreSommet(v, s), distance[autreSommet(v, s)]));
+
+                    else
+                        l_pred.push_back(std::make_pair(autreSommet(v, s), v->getIndex()));
+                }
 
                 /// on ajoute à la file de priorité le sommet voisin si il n'est pas déjà marqué
                 boolMarque = 0;
@@ -688,3 +793,98 @@ void Graphe::libererMemoire() {
         delete ptr;
     }
 }
+
+void Graphe::pireCheminDijkstra(Graphe origine, Graphe &optimisable){
+    std::vector<std::vector<bool>*> myBool; /// on crée le vecteur de bool pour l'envoyer à la fonction
+    std::vector < bool >* newChemin = new std::vector < bool >;
+    *newChemin = optimisable.grapheToBool(optimisable);
+    myBool.push_back(newChemin); /// on ajoute les arêtes du graphe optimal pour lancer dijkstra
+    std::vector < std::vector < std::vector < float > > >vecTemps = optimisable.dijkstra(1, myBool);
+
+    std::vector<std::vector<bool>*> myBoolOrigine;
+    std::vector < bool >* newCheminOrigine = new std::vector < bool >;
+    *newCheminOrigine = origine.grapheToBool(origine);
+    myBoolOrigine.push_back(newCheminOrigine); /// on ajoute les arêtes du graphe optimal pour lancer dijkstra
+    std::vector < std::vector < std::vector < float > > >vecTempsOrigine = origine.dijkstra(1, myBoolOrigine);
+
+    float maxTemps = 0;
+    unsigned int x=0, y=0;
+    for (unsigned int i = 0 ; i<vecTemps[0].size() ; ++i){
+        for (unsigned int j = i ; j<vecTemps[0][i].size() ; ++j){
+            if ( vecTemps[0][i][j] > maxTemps ){
+                maxTemps = vecTemps[0][i][j];
+                x = i;
+                y = j;
+            }
+        }
+    }
+    std::cout << "Le plus long chemin est celui du sommet " << x << " au sommet " << y
+              << " avec un temps optimal pour le moment de: " << maxTemps << std::endl;
+
+    std::cout << "Dans le graphe d'origine le temps pour se rendre du sommet " << x << " au sommet " << y
+              << " est de: " << vecTempsOrigine[0][x][y] << std::endl;
+    if (vecTempsOrigine[0][x][y] == maxTemps)std::cout << "Le chemin est donc deja optimal en fonction du temps, on ne peut pas l'ameliorer sans creer de nouvelles aretes" << std::endl;
+    else {
+        if(x > y) y = origine.m_sommets.size() - y - 1;
+        if(x < y) y = origine.m_sommets.size() - x - 1;
+        std::vector<std::vector<std::vector<int>>> vecChemin = origine.pireDijkstra(1);
+        std::cout << "Le meilleurs chemin est : " << std::endl;
+        for (unsigned int i=0 ; i<vecChemin[x][y].size() ; ++i){
+            std::cout << vecChemin[x][y][i] << " / ";
+        }
+        std::cout << std::endl;
+    }
+    delete(newChemin);
+    delete(newCheminOrigine);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

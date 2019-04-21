@@ -53,9 +53,11 @@ class Graphe
     int autreSommet(Arete* a, Sommet* s);
 
     /// Dijkstra
-    std::vector < std::pair <int, float> > parcoursDijkstra(unsigned int poids, Sommet* depart, std::vector<bool>* myBool);
-
+    std::vector < std::pair <int, float> > parcoursDijkstra(unsigned int poids, Sommet* depart, std::vector<bool>* myBool, int mode);
     std::vector < std::vector < std::vector < float > > > dijkstra(unsigned int indexOfPoids, std::vector<std::vector<bool>*> myBool);
+    std::vector < std::vector < std::vector <int> > > pireDijkstra(unsigned int indexOfPoids);
+
+    void pireCheminDijkstra(Graphe origine, Graphe &optimisable);
 };
 
 #endif // GRAPHE_H

@@ -10,6 +10,7 @@
 void gotoXY(int x,int y); // Utilise dans le menu interactif
 void menu(); /// Permet de se déplacer dans un menu et de faire des choix
 void choisirFichiers(std::string& fichier, std::string& fichierPoids); /// Permet de choisir un fichier de graphe
+void choisirFichiersExtension(std::string& fichier, std::string& fichierPoids, std::string& fichierAOptimiser, std::string& fichierPoidsAOptimiser); /// Choix spécial pour l'extension
 int choisirPoids(Graphe* myGraphe); /// Permet de lancer un menu pour choisir sur quel poids lancer l'algo
 
 template<typename T>
