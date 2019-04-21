@@ -4,6 +4,7 @@ Sommet::Sommet(int index, int x, int y){
     setSommet(index, x, y);
 }
 
+/// Ajoute une arete
 void Sommet::addArete(int arete) {
     m_aretesSommet.push_back(arete);
 }
@@ -17,13 +18,3 @@ void Sommet::afficherAretes() const {
     }
     std::cout << std::endl;
 }
-
-    /*************************
-    *************************/
-
-
-
-
-
-    /*************************
-    *************************/

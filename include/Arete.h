@@ -13,7 +13,7 @@ class Arete
   public:
     Arete(int index, int s1, int s2);
     Arete(int index, int s1, int s2, std::vector<float> vecPoids);
-    ~Arete();
+    ~Arete() = default;
 
     /// GETTERS
     int getS1() const    { return m_s1; }

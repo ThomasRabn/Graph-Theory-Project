@@ -302,13 +302,13 @@ std::vector < std::pair <int, float> > Graphe::parcoursDijkstra(unsigned int poi
     return l_pred;
 }
 
-/// utile ?
 std::vector<float> Graphe::resultatGraphe(std::vector<std::vector<std::vector<float>>> matriceBruteForce) {
     std::vector<float> poidsRetour(matriceBruteForce.size(), 0);
     for (unsigned int i = 0 ; i < matriceBruteForce.size() ; ++i){
         for (unsigned int j = 0 ; j < matriceBruteForce[i].size() ; ++j){
             for (unsigned int k = j ; k < matriceBruteForce[i][j].size() ; ++k){
                 poidsRetour[i] += matriceBruteForce[i][j][k];
+                /// Commenter la ligne au dessus et decommenter celle du dessous permet d'avoir les memes resultats que sur le pdf du projet
                 //poidsRetour[i] += (2*matriceBruteForce[i][j][k]);
             }
         }
@@ -316,11 +316,13 @@ std::vector<float> Graphe::resultatGraphe(std::vector<std::vector<std::vector<fl
     return poidsRetour;
 }
 
+/// Fonction retournant un vector de float des poids totaux
 std::vector<float> Graphe::resultatGraphe() {
     std::vector<bool> vecBool (m_aretes.size(), 1);
     return resultatGraphe(vecBool);
 }
 
+/// Fonction retournant un vector de float des poids totaux en fonction d'un vecteur de booleens (1 = arete; 0 = pas arete)
 std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
     if (!(getAretes().empty())) {
         int nbPoids = getAretes()[0]->getNbPoids(); /// on obtient le nombre de poids que les arètes possèdent
@@ -338,15 +340,34 @@ std::vector<float> Graphe::resultatGraphe(std::vector<bool> vecBool) {
 }
 
 /// Retourne un vecteur de bool contenant tous le sous-graphes de Ordre-1 aretes. vec[i] = 1 -> arete n°i ajoutee.
-std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels(bool toggleAbove) {
+std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels(int toggleAbove, std::vector<bool> vec1, std::vector<bool> vec2) {
     std::vector<std::vector<bool>*> graphesPartiels;
     std::vector<bool> etats (m_aretes.size(), 0), allTrue(m_aretes.size(), 1);
     unsigned int nbrAretes = 0; /// Suit le nombre d'aretes presentes dans le graphe partiel créé
     bool run = 1;
 
+    if(toggleAbove == 2 && ((vec1.size() < m_aretes.size()) || (vec2.size() < m_aretes.size())))      { std::cout << "ERREUR. SORTIE."; run = 0; } /// Si on active le mode double kruskal et qu'il n'y a pas les bonnes tailles on quitte
+
     while(run) {
-        if (nbrAretes == m_sommets.size()-1)                        graphesPartiels.push_back(new std::vector<bool>{etats});
-        else if(nbrAretes > m_sommets.size()-1 && toggleAbove)      graphesPartiels.push_back(new std::vector<bool>{etats});
+        if(toggleAbove == 2) { /// Entre la dedans si on prend en compte les graphes de kruskal
+            if (nbrAretes == m_sommets.size()-1) {
+                unsigned int compteur = 0;
+                for(unsigned int i = 0; i < etats.size(); ++i) {
+                    if(vec1[i] == 0 || vec2[i] == 0) { /// Si au moins un des deux graphes ne contient pas l'arete on dit que c'est ok
+                        ++compteur;
+                    }
+                    else if(etats[i] == 1) { /// Si les deux graphes on l'arete et que la configuration du moment l'a aussi, on dit que c'est ok
+                        ++compteur;
+                    }
+                    else{ break; } /// Sinon on abandonne, la configuration ne repond pas a nos attentes
+                }
+                if(compteur == etats.size())                                 graphesPartiels.push_back(new std::vector<bool>{etats}); /// Si tous les bits de la configuration ont ete valide on l'ajoute
+            }
+        }
+        else{ /// Si on est pas dans le mode double kruskal
+            if (nbrAretes == m_sommets.size()-1)                             graphesPartiels.push_back(new std::vector<bool>{etats}); /// On ajoute si le nombre d'aretes est egal a ordre-1
+            else if(nbrAretes > m_sommets.size()-1 && toggleAbove == 1)      graphesPartiels.push_back(new std::vector<bool>{etats}); /// Si on est en mode kruskal on ajoute aussi si le nbr d'arete est superieur a ordre-1
+        }
 
         if (etats == allTrue)   run = 0; /// Arrete la boucle si on a fait tous les tests
         else{ /// Augmente de 1 la valeur binaire enregistrée dans le tableau de booléens (Poids le plus lourd a la fin)
@@ -360,6 +381,7 @@ std::vector<std::vector<bool>*> Graphe::ensembleGraphesPartiels(bool toggleAbove
     return graphesPartiels;
 }
 
+/// Retourne un vecteur de pointeurs sur vecteurs de booleens representant les configurations couvrantes
 std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std::vector<bool>*> vec) {
     std::vector<std::vector<bool>*> arbresCouvrants; /// Vecteur stockant tous les pointeurs vers vecteur de booleens permettant de savoir quelles aretes on ajoute
     std::vector<int> allRight(m_sommets.size(), 0);
@@ -375,13 +397,13 @@ std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std:
             if ((*(vec[i]))[j]) { /// Si l'arete existe on ajoute les sommets qui sont reliés
                 indiceVec1 = getAretes()[j]->getS1();
                 indiceVec2 = getAretes()[j]->getS2();
-                if (vecSommets[indiceVec1]<vecSommets[indiceVec2]) {
+                if (vecSommets[indiceVec1]<vecSommets[indiceVec2]) { /// Si la composante connexe du sommet 1 est inferieure a celle du sommet 2 on echange toutes les composantes connexes des sommets qui ont celle de 1 en celle de 2
                     for(unsigned int l = 0; l < vecSommets.size(); l++) {
                         if((vecSommets[l] == vecSommets[indiceVec2])&&((int)l != indiceVec2)) { vecSommets[l] = vecSommets[indiceVec1]; }
                     }
                     vecSommets[indiceVec2] = vecSommets[indiceVec1];
                 }
-                else {
+                else { /// Si la composante connexe du sommet 2 est inferieure a celle du sommet 1 on echange toutes les composantes connexes des sommets qui ont celle de 2 en celle de 1
                     for(unsigned int l = 0; l < vecSommets.size(); l++) {
                         if((vecSommets[l] == vecSommets[indiceVec1])&&((int)l != indiceVec1)) { vecSommets[l] = vecSommets[indiceVec2]; }
                     }
@@ -390,23 +412,30 @@ std::vector<std::vector<bool>*> Graphe::ensembleArbresCouvrants(std::vector<std:
                 for(unsigned int m = 0; m < vecSommets.size(); m++) {
                 }
 
-                if (vecSommets == allRight)         { arbresCouvrants.push_back(vec[i]); break; } // Si tous les sommets sont ajoutes on ajoute la configuration a arbresCouvrants et on sort de la boucle
+                if (vecSommets == allRight)         { arbresCouvrants.push_back(vec[i]); break; } /// Si tous les sommets sont ajoutes on ajoute la configuration a arbresCouvrants et on sort de la boucle
             }
         }
     }
     return arbresCouvrants;
 }
 
-void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
+/// Fonction pour lancer un pareto. Mode 0 : normal, mode 1 : dijkstra, mode 2 : double kruskal
+void Graphe::affichagePareto(int mode, int indicePoidsDijkstra) {
     std::vector<std::vector<float>*> vecPoidsSolutions;
     std::vector<std::vector<bool>*> vecSolutionsTaille;
-    if(toggleDijkstra)  vecSolutionsTaille = ensembleGraphesPartiels(true); /// Retourne tous les graphes partiels d'au moins ordre-1 aretes
-    else                vecSolutionsTaille = ensembleGraphesPartiels(false);/// Retourne tous les graphes partiels de ordre-1 aretes
+    if(mode == 1)                   vecSolutionsTaille = ensembleGraphesPartiels(true); /// Retourne tous les graphes partiels d'au moins ordre-1 aretes (mode Dijkstra)
+    else if(mode == 0)              vecSolutionsTaille = ensembleGraphesPartiels(false);/// Retourne tous les graphes partiels de ordre-1 aretes (mode Pareto simple)
+    else{ /// Mode en fonction d'un double Kruskal
+        Graphe kruskal1 = parcourKruskal(0); /// On lance kruskal pour les deux poids
+        Graphe kruskal2 = parcourKruskal(1);
+        std::vector<bool> boolKruskal1 = grapheToBool(kruskal1); /// On transforme les graphes de kruskal en vecteur de booleens
+        std::vector<bool> boolKruskal2 = grapheToBool(kruskal2);
+        vecSolutionsTaille = ensembleGraphesPartiels(2, boolKruskal1, boolKruskal2); /// On utilise la fonction overload
+    }
     std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille); /// Retourne tous les arbres couvrant faisant partie de vecSolutionsTaille
-    std::cout << std::endl << "Solutions couvrantes trouvees !" << std::endl;
 
     /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
-    if(toggleDijkstra) {
+    if(mode == 1) { /// POUR LE MODE DIJKSTRA
         std::vector<std::vector<std::vector<float>>> vecDij = dijkstra(indicePoidsDijkstra, vecSolutionsCouvrantes);
         std::vector<float>* sommesTempsParcours = new std::vector<float>;
         *sommesTempsParcours = resultatGraphe(vecDij);
@@ -426,7 +455,7 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
             (*poidsSolution).push_back(i);
             vecPoidsSolutions.push_back(poidsSolution);
         }
-    } else {
+    } else { /// POUR LES AUTRES MODES
         for(unsigned int i = 0; i < vecSolutionsCouvrantes.size(); ++i) {
             std::vector<float>* poidsSolution =  new std::vector<float>;
             *poidsSolution = resultatGraphe(*(vecSolutionsCouvrantes[i]));
@@ -454,6 +483,8 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
     std::vector<int> vecIndicesSolutionsNonDominees = giveSolutionsNonDominees(vecPoidsSolutions, maxX, minY);
 
     /// Affiche tous les graphes solutions sur un fichier SVG
+    bool toggleDijkstra = 0; // Creation d'un booléen permettant de savoir si on est en mode dijkstra
+    if (mode == 1)      toggleDijkstra = 1; // Si mode = dijkstra le booleen vaut 1
     dessinerPareto(vecIndicesSolutionsNonDominees, vecSolutionsCouvrantes, vecPoidsSolutions, minX, maxX, minY, maxY, vecPoidsSolutionsNonTriees, toggleDijkstra);
 
     /// On désalloue la mémoire (on ne désalloue pas vecSolutionsCouvrantes car il est inclu dans vecSolutionTaille)
@@ -465,14 +496,15 @@ void Graphe::affichagePareto(bool toggleDijkstra, int indicePoidsDijkstra) {
     }
 }
 
+/// Renvoie un vecteur de int contenant les indices (dans vecPoidsSolutions) ds solutions non dominees
 std::vector<int> Graphe::giveSolutionsNonDominees(std::vector<std::vector<float>*> vecPoidsSolutions, int& maxX, int& minY) {
     std::vector<int> vecIndicesSolutionsNonDominees;
     vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[0]).back());
-    for(unsigned int i = 1; i < vecPoidsSolutions.size(); ++i) {
-        if ((*vecPoidsSolutions[i])[0] != maxX) {
-            if ((*vecPoidsSolutions[i])[1] < minY) {
-                vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[i]).back());
-                maxX = (*vecPoidsSolutions[i])[0];
+    for(unsigned int i = 1; i < vecPoidsSolutions.size(); ++i) { /// Pour chaque configuration
+        if ((*vecPoidsSolutions[i])[0] != maxX) { /// Si on avance en x
+            if ((*vecPoidsSolutions[i])[1] < minY) { /// Si on diminue en y
+                vecIndicesSolutionsNonDominees.push_back((*vecPoidsSolutions[i]).back()); /// On ajoute l'indice au vecteur
+                maxX = (*vecPoidsSolutions[i])[0]; /// On remplace les maxX et minY
                 minY = (*vecPoidsSolutions[i])[1];
             }
         }
@@ -493,9 +525,10 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
     svgout.addLine(debutX-50, hauteur+debutY, debutX+largeur, hauteur+debutY);
     svgout.addLine(debutX, debutY, debutX, debutY+hauteur+50);
 
+    /// Changement des coeff et tailles pour le diagramme
     int rayonFaux = 2, rayonVrai = 5;
     float coeffBasX, coeffHautX, coeffBasY, coeffHautY; /// CoeffBas : petit -> Proche de 0; coeffHaut -> petit : proche de la fin des axes
-    if(toggleDijkstra) {
+    if(toggleDijkstra) { /// Si on est en imode dijkstra on a pas les memes coeff que si on n'est pas en mode dijkstra
         coeffBasX = 0.1; coeffHautX = 0; coeffBasY = 0.1; coeffHautY = 0.2;
     } else{
         if(vecSolutionsCouvrantes.size() < 100) {
@@ -507,14 +540,17 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
         }
     }
 
+    /// DESSIN DE L'ENSEMBLE DES SOLUTIONS SUR LE GRAPHIQUE
     float lastX = -1, lastY = -1, coeffRayon = 1;
     if(!toggleDijkstra) {
         for(auto it : vecPoidsSolutions) {
             if ((*it)[0] != lastX || (*it)[1] != lastY) {
+                /// On map les valeurs en fonction des extremes
                 float posX = mapping((*it)[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
                 float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
                 lastX = (*it)[0];
                 lastY = (*it)[1];
+                /// On dessine sur le graphique
                 svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
                 coeffRayon = 1;
             } else {
@@ -524,10 +560,12 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
     } else{
         for(auto it : vecPoidsSolutions) {
             if ((*it)[0] != lastX || ((*it)[1] != lastY && vecPoidsSolutions.size() < 100) || (*it)[1] - lastY > 5) {
+                /// On map les valeurs en fonction des extremes
                 float posX = mapping((*it)[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
                 float posY = mapping((*it)[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
                 lastX = (*it)[0];
                 lastY = (*it)[1];
+                /// On dessine sur le graphique
                 svgout.addDisk(posX, posY, rayonFaux*coeffRayon, 100, svgout.makeRGB(255,0,0));
                 coeffRayon = 1;
             } else {
@@ -536,13 +574,15 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
         }
     }
 
-    for(auto it : vecIndicesSolutionsNonDominees) {
+    /// DESSIN DES SOLUTIONS NON DOMINEES SUR LE GRAPHIQUE
+    for(auto it : vecIndicesSolutionsNonDominees) { /// On repasse les solutions non dominees en vert
         std::vector<float> vecPoidsNonDominees = *(vecPoidsSolutionsNonTriees[it]);
         float posX = mapping(vecPoidsNonDominees[0], minX, maxX, debutX+coeffBasX*largeur, debutX+largeur-coeffHautX*largeur);
         float posY = mapping(vecPoidsNonDominees[1], minY, maxY, debutY+hauteur-coeffBasY*hauteur, debutY+hauteur-(1-coeffHautY)*hauteur);
         svgout.addDisk(posX, posY, rayonVrai, 100, svgout.makeRGB(0,200,0));
     }
 
+    /// DESSIN DES GRAPHES DES SOLUTIONS NON DOMINEES ET ECRITURE DE LEUR POIDS
     int x = 100, y = 400;
     maxX = -1; minX = std::numeric_limits<int>::max();
     minY = minX;
@@ -568,11 +608,13 @@ void Graphe::dessinerPareto(std::vector<int> vecIndicesSolutionsNonDominees, std
     }
 }
 
+/// Dessine un graphe sur le fichier svgout
 void Graphe::dessiner(Svgfile& svgout, int x, int y, bool toggleText, float coeffTaille) {
     std::vector<bool> vecBool(m_aretes.size(), 1);
     dessiner(svgout, vecBool, x, y, toggleText, coeffTaille);
 }
 
+/// Dessine un graphe sur le fichier en prenant en compte ou non les poids et en augmentant la taille ou non du graphe
 void Graphe::dessiner(Svgfile& svgout, std::vector<bool> vecBool, int x, int y, bool toggleText, float coeffTaille) {
     int s1, s2, x1, y1, x2, y2;
     /// DESSIN DES ARETES
@@ -620,10 +662,31 @@ void Graphe::dessiner(Svgfile& svgout, std::vector<bool> vecBool, int x, int y, 
     }
 }
 
-Graphe Graphe::ajoutPireCheminOptimisable(Graphe grapheEntry, Graphe grapheTotal){
-  Graphe myGraphe = grapheEntry;
-
+/// Transorme un graphe en vecteur de booleen (1 = arete; 0 = pas d'arete)
+std::vector<bool> Graphe::grapheToBool(Graphe g) {
+    std::vector<bool> vecBool;
+    for(unsigned int i = 0; i < getAretes().size(); ++i) {
+        bool ajoute = 0;
+        for(int j = i; j >= 0; --j) {
+            if(g.getAretes().size() > (unsigned int)j) {
+                if ((g.getAretes()[j])->getIndex() == (int)i) {
+                    ajoute = 1;
+                    break;
+                }
+            }
+        }
+        if (ajoute == 1)    vecBool.push_back(1);
+        else                vecBool.push_back(0);
+    }
+    return vecBool;
 }
 
-Graphe::~Graphe()
-{ }
+/// On vide la memoire quand on a fini avec le graphe
+void Graphe::libererMemoire() {
+    for(auto ptr : m_sommets) {
+        delete ptr;
+    }
+    for(auto ptr : m_aretes) {
+        delete ptr;
+    }
+}

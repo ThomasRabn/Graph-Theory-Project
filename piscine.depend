@@ -34,39 +34,36 @@
 	<iostream>
 	<sstream>
 
-1555793004 source:c:\users\thomas\desktop\projetpiscine\main.cpp
-	"svgfile.h"
-	"Graphe.h"
-	<windows.h>
-	<conio.h>
-	<cstdlib>
+1555856149 source:c:\users\thomas\desktop\projetpiscine\main.cpp
+	"utile.h"
 
 1555455912 source:c:\users\thomas\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
 
-1555769661 c:\users\thomas\desktop\projetpiscine\include\arete.h
+1555855805 c:\users\thomas\desktop\projetpiscine\include\arete.h
 	"Sommet.h"
 
-1555769661 c:\users\thomas\desktop\projetpiscine\include\sommet.h
+1555855853 c:\users\thomas\desktop\projetpiscine\include\sommet.h
 	<vector>
 	<iostream>
-	"Arete.h"
 	<algorithm>
 
-1555802391 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
+1555857209 source:c:\users\thomas\desktop\projetpiscine\src\graphe.cpp
 	"Graphe.h"
+	<vector>
+	"time.h"
 
-1555785182 c:\users\thomas\desktop\projetpiscine\include\graphe.h
+1555856044 c:\users\thomas\desktop\projetpiscine\include\graphe.h
 	<unordered_map>
 	<iomanip>
 	<queue>
 	<sstream>
-	<algorithm>
 	<limits>
 	"Sommet.h"
+	"Arete.h"
 	"svgfile.h"
 
-1555768876 source:c:\users\thomas\desktop\projetpiscine\src\sommet.cpp
+1555855989 source:c:\users\thomas\desktop\projetpiscine\src\sommet.cpp
 	"Sommet.h"
 
 1555337754 source:c:\users\thomas\desktop\projetpiscine\src\svg.cpp
@@ -136,7 +133,12 @@
 	<iostream>
 	<sstream>
 
-1555620664 c:\users\thomas\desktop\projetpiscine\include\utile.h
+1555857737 c:\users\thomas\desktop\projetpiscine\include\utile.h
+	"svgfile.h"
+	"Graphe.h"
+	<windows.h>
+	<conio.h>
+	<cstdlib>
 
 1555809570 source:c:\users\paulb\desktop\projetpiscine\src\arete.cpp
 	"Arete.h"
@@ -183,4 +185,7 @@
 	"Graphe.h"
 	<vector>
 	"time.h"
+
+1555857857 source:c:\users\thomas\desktop\projetpiscine\src\utile.cpp
+	"utile.h"
 

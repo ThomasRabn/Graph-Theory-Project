@@ -3,17 +3,7 @@
 
 #include <vector>
 #include <iostream>
-
-    /*************************
-    *************************/
-
-#include "Arete.h"
 #include <algorithm>
-
-    /*************************
-    *************************/
-
-class Arete;
 
 class Sommet
 {
@@ -23,7 +13,7 @@ class Sommet
 
   public:
     Sommet(int index, int x, int y);
-    ~Sommet();
+    ~Sommet() = default;
 
     /// GETTERS
     int getIndex() const { return m_index; }
