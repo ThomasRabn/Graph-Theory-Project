@@ -254,8 +254,8 @@ void choisirFichiersExtension(std::string& fichier, std::string& fichierPoids, s
     bool run = 1;
 
     std::cout << "Quel fichier voulez-vous choisir ? Fichier actuel : " << fichier << "; Fichier poids actuel : " << fichierPoids << "; Fichier a optimiser : " << fichierAOptimiser << "; Fichier poids a optimiser : " << fichierPoidsAOptimiser << std::endl
-              << "1) Option de test avec un fichier par default " << std::endl
-              << "2) Choisir nos fichier a la main " << std::endl;
+              << "1) Option de test avec un fichier par defaut " << std::endl
+              << "2) Choisir nos fichiers a la main " << std::endl;
     do{
         gotoXY(x, y);
         system("pause>nul");  // Arrete tout (nul permet de ne pas avoir d'affichage)
@@ -292,7 +292,7 @@ void choisirFichiersExtension(std::string& fichier, std::string& fichierPoids, s
                 std::cout << "Entrez le chemin et le nom du fichier du graphe a optimiser (0 pour annuler) : ";
                 std::string nom3;
                 entreeClavier(nom3);
-                std::cout << "Entrez le chemin et le nom du fichier du ficher de poids du graphe a optimiser (0 pour annuler) : ";
+                std::cout << "Entrez le chemin et le nom du fichier de poids du graphe a optimiser (0 pour annuler) : ";
                 std::string nom4;
                 entreeClavier(nom4);
                 if (nom1 == "0" || nom2 == "0" || nom3 == "0" || nom4 == "0") { std::cout << std::endl << "Annule !"; }
