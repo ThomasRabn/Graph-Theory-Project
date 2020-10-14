@@ -1,7 +1,3 @@
-BIANCALANA Paul
-RABIAN Thomas
-WOJCIECHOWKI Pierre
-
 # Graph Thery Project - "Pool" Project
 
 ## The Project
