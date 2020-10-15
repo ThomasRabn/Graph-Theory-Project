@@ -527,7 +527,7 @@ void Graphe::affichagePareto(int mode, int indicePoidsDijkstra) {
     std::vector<std::vector<float>*> vecPoidsSolutions;
     std::vector<std::vector<bool>*> vecSolutionsTaille;
     if(mode == 1)                   vecSolutionsTaille = ensembleGraphesPartiels(true); /// Retourne tous les graphes partiels d'au moins ordre-1 aretes (mode Dijkstra)
-    else if(mode == 0)              vecSolutionsTaille = ensembleGraphesPartiels(false);/// Retourne tous les graphes partiels de ordre-1 aretes (mode Pareto simple)
+    else if(mode == 0)              vecSolutionsTaille = ensembleGraphesPartiels();/// Retourne tous les graphes partiels de ordre-1 aretes (mode Pareto simple)
     else{ /// Mode en fonction d'un double Kruskal
         Graphe kruskal1 = parcourKruskal(0); /// On lance kruskal pour les deux poids
         Graphe kruskal2 = parcourKruskal(1);
@@ -535,6 +535,7 @@ void Graphe::affichagePareto(int mode, int indicePoidsDijkstra) {
         std::vector<bool> boolKruskal2 = grapheToBool(kruskal2);
         vecSolutionsTaille = ensembleGraphesPartiels(2, boolKruskal1, boolKruskal2); /// On utilise la fonction overload
     }
+    std::cout << vecSolutionsTaille.size();
     std::vector<std::vector<bool>*> vecSolutionsCouvrantes = ensembleArbresCouvrants(vecSolutionsTaille); /// Retourne tous les arbres couvrant faisant partie de vecSolutionsTaille
 
     /// PERMET DE FAIRE LE TRI EN CREANT DES VECTEURS DE FLOAT CONTENANT LES POIDS. MEILLEURE OPTIMISATION QUE CREER UN GRAPHE POUR TESTER -> GAIN DE TEMPS
@@ -841,54 +842,3 @@ void Graphe::pireCheminDijkstra(Graphe origine, Graphe &optimisable){
     delete(newChemin);
     delete(newCheminOrigine);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
